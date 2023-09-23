@@ -25,12 +25,16 @@ SECRET_KEY = 'django-insecure-%m^r&a9v(4d3g)h1r8hwc13v0-&545i)v*)#=)2@q7t$4vfsm3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+from environs import Env
+env = Env()
+
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ("localhost", "127.0.0.1", "leifstation.local"))
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'AttendanceTaker.apps.AttendancetakerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
