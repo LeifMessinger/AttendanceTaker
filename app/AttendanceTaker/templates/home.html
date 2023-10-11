@@ -12,11 +12,13 @@
 	<div style="flex-basis: 20%; background: yellow;"></div>
 	<div column grow>
 		<div style="flex-basis: 20%; background: yellow;"></div>
-		<form action="" method="post"> <!-- Posts to the same url as the home page -->
-			{% csrf_token %}
-			{{ form }}
-			<button type="submit"></button>
-		</form>
+		<div column grow>
+			<form action="" method="post"> <!-- Posts to the same url as the home page -->
+				{% csrf_token %}
+				{{ form }}
+				<button type="submit">Create room!</button>
+			</form>
+		</div>
 		<div  style="flex-basis: 20%; background: yellow;"></div>
 	</div>
 	<div  style="flex-basis: 20%; background: yellow; text-align: right;">

@@ -1,9 +1,10 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 
 from .forms import MakeRoomForm
 
-from app_name.models import Classroom
+from .models import Classroom
 
 #This is our homepage
 def make_room(request):
@@ -15,24 +16,35 @@ def make_room(request):
 		if form.is_valid():	#Cleans the data too...? SQL Sanitization
 			# process the data in form.cleaned_data as required
 			# https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Forms
+			if (form.cleaned_data["classCode"] == ""):	#if the class code is left blank
+				newClassroom = form.save(commit=False)
 
-			#https://stackoverflow.com/a/65575242/10141528
-			try:
-				obj = Classroom.objects.get(classCode = form.cleaned_data["classCode"])
-				#obj["classCode"] = classCode=form.cleaned_data["classCode"]	#Class code is the same anyways
-				if form.cleaned_data["classList"]:
-					obj["classList"] = classCode=form.cleaned_data["classList"] #Not form.object.cleaned_data, because we're looking for the form's data
-					obj.save()
+				newClassroom.classCode = str(newClassroom.id) #The user isn't using the class code anyways, but it still needs to be unique
 
-				request.session["room_id"] = obj["id"]
+				newClassroom.save()
 
-			except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
-				#This means we're in the clear, and we can create a new classroom.
-				newClassroom = form.save()
-				request.session["room_id"] = newClassroom["id"]
+				request.session["room_id"] = str(newClassroom.id)
+			else:
+				#https://stackoverflow.com/a/65575242/10141528
+				try:
+					obj = Classroom.objects.get(classCode = form.cleaned_data["classCode"])
+					#obj["classCode"] = classCode=form.cleaned_data["classCode"]	#Class code is the same anyways
+					if form.cleaned_data["classList"]:
+						obj["classList"] = form.cleaned_data["classList"] #Not form.object.cleaned_data, because we're looking for the form's data
+						obj.save()
+
+					request.session["room_id"] = str(obj.id)
+
+				except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
+					#This means we're in the clear, and we can create a new classroom.
+					newClassroom = form.save()
+					request.session["room_id"] = str(newClassroom.id)
 
 			# redirect to a new URL:
 			return HttpResponseRedirect(reverse("room")) #, args=[0])) #or , args={key: "value"}))
+		else:	#The form isn't valid
+			#Render the page again
+			return render(request, "home.html", {"form": form})	#The form has a form.errors which will show on reload
 
 	# if a GET (or any other method) we'll create a blank form
 	form = MakeRoomForm()

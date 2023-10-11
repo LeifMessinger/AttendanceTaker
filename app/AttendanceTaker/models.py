@@ -26,8 +26,8 @@ class Classroom(models.Model):
 		primary_key = True,
 		default = uuid.uuid4,
 		editable = False)
-	classCode = models.CharField(max_length=30)
-	classList = models.TextField() #JSON string
+	classCode = models.CharField(max_length=30, blank=True)
+	classList = models.TextField(blank=True) #JSON string
 
 class Student(models.Model):
 	id = models.UUIDField(

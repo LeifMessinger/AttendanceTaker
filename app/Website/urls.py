@@ -18,8 +18,8 @@ from django.urls import include, path
 from django.http import HttpResponseRedirect
 
 urlpatterns = [
-    path('', lambda r: HttpResponseRedirect('attendance/')),
-    path(r'^$', lambda r: HttpResponseRedirect('attendance/')),
-    path("attendance/", include("AttendanceTaker.urls")),
+    path('', lambda r: HttpResponseRedirect('MakeRoom/')),
+    #path(r'^$', lambda r: HttpResponseRedirect('MakeRoom/')),
+    path("MakeRoom/", include("AttendanceTaker.urls")),
     path("admin/", admin.site.urls),
 ]
