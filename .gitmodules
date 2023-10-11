@@ -1,0 +1,3 @@
+[submodule "app/AttendanceTaker/static/AttendanceTaker/FlexML"]
+	path = app/AttendanceTaker/static/AttendanceTaker/FlexML
+	url = git@github.com:LeifMessinger/FlexML.git

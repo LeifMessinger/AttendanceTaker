@@ -1,0 +1,14 @@
+{% for field in form %}
+	<div row class="fieldWrapper">
+		{{ field.errors }}
+		<div grow style="display: inline;"> {{ field.label }} </div>
+		{% if field.help_text %}
+			<div style="display: inline; text-align: right;">optional</div> <!-- Have to figure out how to tie this to the field.required -->
+		{% endif %}
+		<br />
+		{{ field }}
+		{% if field.help_text %}
+			<p class="help">{{ field.help_text|safe }}</p>
+		{% endif %}
+	</div><br />
+{% endfor %}
