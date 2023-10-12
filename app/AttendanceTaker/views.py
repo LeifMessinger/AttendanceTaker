@@ -51,7 +51,27 @@ def make_room(request):
 
 	return render(request, "home.html", {"form": form})
 
+
+# Import the required modules
+from django.conf import settings
 def room(request):
 	room_code = request.session.get("room_id")
 	#get_object_or_404(Classroom, id=room_code) #This definitely won't work first try
-	return HttpResponse(str(room_code))
+
+	text = room_code
+
+	from cryptography.fernet import Fernet
+	fernet = Fernet(settings.FERNET_KEY)
+
+	# Define a string to encrypt and decrypt
+	message = b"Hello, world!"
+
+	# Encrypt the message
+	encrypted = fernet.encrypt(message)
+	text += "\n" + "Encrypted: " + encrypted.decode()
+
+	# Decrypt the message
+	decrypted = fernet.decrypt(encrypted)
+	text += "\n" + "Decrypted: " + decrypted.decode()
+
+	return HttpResponse(text)
