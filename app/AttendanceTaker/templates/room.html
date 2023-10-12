@@ -1,30 +1,15 @@
-<head>
-	{% load static %}
-	<link rel="stylesheet" href="{% static 'AttendanceTaker/FlexML/FlexML.css' %}" type="text/css">
-	<style>
-		.placeholderURL {
-			color: red;
-		}
-	</style>
-</head>
+{% extends "layout.html" %}
 
-<div row grow>
-	<div style="flex-basis: 20%; background: yellow;"></div>
-	<div column grow>
-		<div style="flex-basis: 20%; background: yellow;"></div>
-		<form action="" method="post"> <!-- Posts to the same url as the home page -->
-			{% csrf_token %}
-			{{ form }}
-			<button type="submit"></button>
-		</form>
-		<div  style="flex-basis: 20%; background: yellow;"></div>
-	</div>
-	<div  style="flex-basis: 20%; background: yellow; text-align: right;">
-		Attendance Taker v0.0<br />
-		<u class="placeholderURL">Reciept Verifier</u><br />
-		<br />
-		Bookmarklets:<br />
-		<u class="placeholderURL">CanvasClassList</u><br />
-		<u class="placeholderURL">GradeClassList</u><br />
-	</div>
-</body>
+{% block left_content %}
+	<!-- This is where the absent people go, if classList was defined -->
+{% endblock %}
+
+{% block middle_content %}
+	<p style="font-size: 10vh; margin-left: auto; margin-right: auto;">Scan me!</p>
+	<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA/QAAAP0AQMAAAA+6+UhAAAAAXNSR0IArs4c6QAAAAZQTFRFAAAA////pdmf3QAAAqlJREFUeNrt3TGOwzAMBED/wP//pX+gawOFISUjUnzAbOVC5jDtQnCO9tNcB5/P5/P5fD6fz+fz+Xw+n8/n8xf61zGU/uz5Oig6MDCMz+fz+Xw+n8/n8/l8Pp/P5/P5y/20J+4OlP7YMD6fz+fz+Xw+n8/n8/l8Pp/P5+/yr6R0vvmYDuPz+Xw+n8/n8/l8Pp/P5/P5fP7z/MEqms/n8/l8Pp/P5/P5fD6fz+fz+f/H7w80Pp/P5/P5fD6fz+fz+Xw+n8/nP9uPUx6YOcvn8/l8Pp/P5/P5fD6fz+fz+fy9fpm4Xi5L53QYn8/n8/l8Pp/P5/P5fD6fz+fzF/rz6QfdDJ/P5/P5fD6fz+fz+Xw+n8/n85f6cWWcfVO4f3zZ6u21tMHm8/l8Pp/P5/P5fD6fz+fz+Xz+cr8cX0o3VuHz+Xw+n8/n8/l8Pp/P5/P5fP5OP0nWSs+Ez+fz+Xw+n8/n8/l8Pp/P5/P56/2XyvhNih/7XOGCLZzA5/P5fD6fz+fz+Xw+n8/n8/n8Xf7M7eFzbNdyKz6fz+fz+Xw+n8/n8/l8Pp/P56/3ZxJ/SKJNdNV8Pp/P5/P5fD6fz+fz+Xw+n8/f5Q9+PSIpqFvfSt/ov/l8Pp/P5/P5fD6fz+fz+Xw+n7/GL0vnpGkudz1Cgs/n8/l8Pp/P5/P5fD6fz+fz+bv8+Hpx6Z/VrseHuXw+n8/n8/l8Pp/P5/P5fD6fz3+IP/hPc2Ov8fl8Pp/P5/P5fD6fz+fz+Xw+/2H+dBV9fev+MZ/P5/P5fD6fz+fz+Xw+n8/n82/5cbIFp7vqK7t/zOfz+Xw+n8/n8/l8Pp/P5/P5/K/7Zca66hZW0Z9+F5/P5/P5fD6fz+fz+Xw+n8/n8xf6Pwufz+fz+Xw+n8/n8/l8Pp/P5/MX+X8ZX2EQjRdPzwAAAABJRU5ErkJggg=="
+		style="width: 70%; margin: auto;"/> <!-- For whatever reason, if you set the width, it won't fight the flexbox height, which looks pleasing -->
+{% endblock %}
+
+{% block right_content %}
+	<!-- This is where the present people go -->
+{% endblock %}

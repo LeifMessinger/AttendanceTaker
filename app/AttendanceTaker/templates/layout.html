@@ -1,0 +1,36 @@
+<head>
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'AttendanceTaker/FlexML/FlexML.css' %}" type="text/css">
+	<style>
+		.formError {
+			color: red;
+		}
+		:root {
+			--subtleBackground: #f2f2ff;
+		}
+	</style>
+</head>
+
+
+{% block content %}
+
+<div row grow>
+	<div style="flex-basis: 20%; background: var(--subtleBackground);">
+		{% block left_content %}
+		{% endblock %}
+	</div>
+	<div column grow>
+		<div style="flex-basis: 20%; background: var(--subtleBackground);"></div>
+		<div column grow>
+			{% block middle_content %}
+			{% endblock %}
+		</div>
+		<div  style="flex-basis: 20%; background: var(--subtleBackground);"></div>
+	</div>
+	<div  style="flex-basis: 20%; background: var(--subtleBackground); text-align: right;">
+		{% block right_content %}
+		{% endblock %}
+	</div>
+</body>
+
+{% endblock %}

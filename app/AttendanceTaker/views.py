@@ -54,7 +54,7 @@ def make_room(request):
 
 # Import the required modules
 from django.conf import settings
-def room(request):
+def testEncryption(request):
 	room_code = request.session.get("room_id")
 	#get_object_or_404(Classroom, id=room_code) #This definitely won't work first try
 
@@ -77,3 +77,7 @@ def room(request):
 
 
 	return HttpResponse(text)
+
+def room(request):
+	room_code = request.session.get("room_id")
+	return render(request, "room.html", { "room_code": room_code })

@@ -1,32 +1,18 @@
-<head>
-	{% load static %}
-	<link rel="stylesheet" href="{% static 'AttendanceTaker/FlexML/FlexML.css' %}" type="text/css">
-	<style>
-		.placeholderURL {
-			color: red;
-		}
-	</style>
-</head>
+{% extends "layout.html" %}
 
-<div row grow>
-	<div style="flex-basis: 20%; background: yellow;"></div>
-	<div column grow>
-		<div style="flex-basis: 20%; background: yellow;"></div>
-		<div column grow>
-			<form action="" method="post"> <!-- Posts to the same url as the home page -->
-				{% csrf_token %}
-				{{ form }}
-				<button type="submit">Create room!</button>
-			</form>
-		</div>
-		<div  style="flex-basis: 20%; background: yellow;"></div>
-	</div>
-	<div  style="flex-basis: 20%; background: yellow; text-align: right;">
-		Attendance Taker v0.0<br />
-		<u class="placeholderURL">Reciept Verifier</u><br />
-		<br />
-		Bookmarklets:<br />
-		<u class="placeholderURL">CanvasClassList</u><br />
-		<u class="placeholderURL">GradeClassList</u><br />
-	</div>
-</body>
+{% block middle_content %}
+	<form action="" method="post"> <!-- Posts to the same url as the home page -->
+		{% csrf_token %}
+		{{ form }}
+		<button type="submit">Create room!</button>
+	</form>
+{% endblock %}
+
+{% block right_content %}
+	Attendance Taker v0.0<br />
+	<u class="formError">Reciept Verifier</u><br />
+	<br />
+	Bookmarklets:<br />
+	<u class="formError">CanvasClassList</u><br />
+	<u class="formError">GradeClassList</u><br />
+{% endblock %}
