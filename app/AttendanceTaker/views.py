@@ -63,15 +63,17 @@ def room(request):
 	from cryptography.fernet import Fernet
 	fernet = Fernet(settings.FERNET_KEY)
 
-	# Define a string to encrypt and decrypt
-	message = b"Hello, world!"
+	import time
+	urlSafeB64String = fernet.encrypt_at_time(b"my deep dark secret", int(time.time()))
+	text += "\n" + "Encoded: " + urlSafeB64String.decode()
 
-	# Encrypt the message
-	encrypted = fernet.encrypt(message)
-	text += "\n" + "Encrypted: " + encrypted.decode()
+	import cryptography #for the error to catch
+	try:
+		NUM_SECONDS_GOOD = 6
+		decodedString = fernet.decrypt_at_time(urlSafeB64String, NUM_SECONDS_GOOD, int(time.time()))
+		text += "\n" + "Decoded: " + decodedString.decode()
+	except cryptography.fernet.InvalidToken:
+		text += "\n" + "Decoded: " + "TOOK TOO LONG BUDDY BOYYY"
 
-	# Decrypt the message
-	decrypted = fernet.decrypt(encrypted)
-	text += "\n" + "Decrypted: " + decrypted.decode()
 
 	return HttpResponse(text)
