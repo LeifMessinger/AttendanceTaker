@@ -35,7 +35,7 @@ class Student(models.Model):
 		default = uuid.uuid4,
 		editable = False)
 	student_fullname = models.CharField(max_length=200)
-	classList = models.TextField() #JSON string
+	#Probably store more data about the student
 	def isTheSame(self, otherStudent):
 		pass #TODO probably just compare `id` keys
 	@staticmethod

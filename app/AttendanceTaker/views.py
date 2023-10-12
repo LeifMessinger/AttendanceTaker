@@ -64,7 +64,7 @@ def room(request):
 	fernet = Fernet(settings.FERNET_KEY)
 
 	import time
-	urlSafeB64String = fernet.encrypt_at_time(b"my deep dark secret", int(time.time()))
+	urlSafeB64String = fernet.encrypt_at_time(b"6dc97a51-af1e-4ff8-a415-7a5cc4842890", int(time.time()))
 	text += "\n" + "Encoded: " + urlSafeB64String.decode()
 
 	import cryptography #for the error to catch
