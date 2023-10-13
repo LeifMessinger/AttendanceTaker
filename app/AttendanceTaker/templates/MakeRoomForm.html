@@ -5,7 +5,7 @@
 			<div style="color: red;">
 				{{ field.errors }}
 			</div>
-			{% if field.help_text %}
+			{% if field.blank %}
 				<div style="display: inline; text-align: right;">optional</div> <!-- Have to figure out how to tie this to the field.required -->
 			{% endif %}
 		</div>

@@ -81,3 +81,40 @@ def testEncryption(request):
 def room(request):
 	room_code = request.session.get("room_id")
 	return render(request, "room.html", { "room_code": room_code })
+
+
+# API stuff
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.conf import settings
+class ClassroomQRCode(APIView):
+	def get(self, request):
+		room_code = request.session.get("room_id")
+		#get_object_or_404(Classroom, id=room_code) #This definitely won't work first try
+
+		text = room_code
+
+		from cryptography.fernet import Fernet
+		fernet = Fernet(settings.FERNET_KEY)
+
+		import time
+		urlSafeB64String = fernet.encrypt_at_time(text.encode(), int(time.time()))
+
+		return Response(urlSafeB64String.decode())
+
+from .models import AttendanceNote, Student, Classroom
+from .serializers import AttendanceNoteSerializer, StudentSerializer, ClassroomSerializer
+from rest_framework import viewsets
+
+class AttendanceNoteViewSet(viewsets.ModelViewSet):
+	queryset = AttendanceNote.objects.all()
+	serializer_class = AttendanceNoteSerializer
+
+class StudentViewSet(viewsets.ModelViewSet):
+	queryset = Student.objects.all()
+	serializer_class = StudentSerializer
+
+class ClassroomViewSet(viewsets.ModelViewSet):
+	queryset = Classroom.objects.all()
+	serializer_class = ClassroomSerializer

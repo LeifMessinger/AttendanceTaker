@@ -6,10 +6,47 @@
 
 {% block middle_content %}
 	<p style="font-size: 10vh; margin-left: auto; margin-right: auto;">Scan me!</p>
-	<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA/QAAAP0AQMAAAA+6+UhAAAAAXNSR0IArs4c6QAAAAZQTFRFAAAA////pdmf3QAAAqlJREFUeNrt3TGOwzAMBED/wP//pX+gawOFISUjUnzAbOVC5jDtQnCO9tNcB5/P5/P5fD6fz+fz+Xw+n8/n8xf61zGU/uz5Oig6MDCMz+fz+Xw+n8/n8/l8Pp/P5/P5y/20J+4OlP7YMD6fz+fz+Xw+n8/n8/l8Pp/P5+/yr6R0vvmYDuPz+Xw+n8/n8/l8Pp/P5/P5fP7z/MEqms/n8/l8Pp/P5/P5fD6fz+fz+f/H7w80Pp/P5/P5fD6fz+fz+Xw+n8/nP9uPUx6YOcvn8/l8Pp/P5/P5fD6fz+fz+fy9fpm4Xi5L53QYn8/n8/l8Pp/P5/P5fD6fz+fzF/rz6QfdDJ/P5/P5fD6fz+fz+Xw+n8/n85f6cWWcfVO4f3zZ6u21tMHm8/l8Pp/P5/P5fD6fz+fz+Xz+cr8cX0o3VuHz+Xw+n8/n8/l8Pp/P5/P5fP5OP0nWSs+Ez+fz+Xw+n8/n8/l8Pp/P5/P56/2XyvhNih/7XOGCLZzA5/P5fD6fz+fz+Xw+n8/n8/n8Xf7M7eFzbNdyKz6fz+fz+Xw+n8/n8/l8Pp/P56/3ZxJ/SKJNdNV8Pp/P5/P5fD6fz+fz+Xw+n8/f5Q9+PSIpqFvfSt/ov/l8Pp/P5/P5fD6fz+fz+Xw+n7/GL0vnpGkudz1Cgs/n8/l8Pp/P5/P5fD6fz+fz+bv8+Hpx6Z/VrseHuXw+n8/n8/l8Pp/P5/P5fD6fz3+IP/hPc2Ov8fl8Pp/P5/P5fD6fz+fz+Xw+/2H+dBV9fev+MZ/P5/P5fD6fz+fz+Xw+n8/n82/5cbIFp7vqK7t/zOfz+Xw+n8/n8/l8Pp/P5/P5/K/7Zca66hZW0Z9+F5/P5/P5fD6fz+fz+Xw+n8/n8xf6Pwufz+fz+Xw+n8/n8/l8Pp/P5/MX+X8ZX2EQjRdPzwAAAABJRU5ErkJggg=="
-		style="width: 70%; margin: auto;"/> <!-- For whatever reason, if you set the width, it won't fight the flexbox height, which looks pleasing -->
+	<!-- Maybe use htmx to swap the image. Use {bruh% url 'AttendanceTaker.QR' } as the image source' -->
+	<style>
+		#qrcode{
+			width: 70%;
+			margin: auto;
+		}
+		#qrcode>img{
+			width: 100%;
+
+			image-rendering: pixelated;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: crisp-edges;
+		}
+	</style>
+
+	<div id="qrcode"></div>
+	<p style="margin-left: auto; margin-right: auto;">This webapp requires cookies to work.</p>
+
+	{% load static %}
+	<script src="{% static 'AttendanceTaker/qrcodejs/qrcode.min.js' %}" type="text/javascript"></script>
+	<script type="text/javascript">
+		const qrcode = new QRCode("qrcode", {
+			//text: "bruh",
+			width: 100,
+			height: 100,
+			colorDark : "#000000",
+			colorLight : "#ffffff",
+			correctLevel : QRCode.CorrectLevel.H,
+		});
+
+		setInterval(()=>{
+			fetch("{% url 'ClassroomQRCode' %}").then((res)=>res.json()).then((data)=>data["data"]).then((base64String)=>{
+				qrcode.makeCode(document.location.origin + "/" + base64String);
+				//console.log(base64String);
+			});
+		}, 1000);	//This QR code can be behind by a second, but that isn't too bad.
+	</script>
 {% endblock %}
 
 {% block right_content %}
 	<!-- This is where the present people go -->
+	<!-- Make Copy JSON button that queries the server for the present list and puts it in the clipboard -->
+	<!-- Make live attendance with htmx that updates every second. It can just render a template that loops through the students. -->
 {% endblock %}

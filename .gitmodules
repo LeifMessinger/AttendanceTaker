@@ -1,3 +1,6 @@
 [submodule "app/AttendanceTaker/static/AttendanceTaker/FlexML"]
 	path = app/AttendanceTaker/static/AttendanceTaker/FlexML
 	url = git@github.com:LeifMessinger/FlexML.git
+[submodule "app/AttendanceTaker/static/AttendanceTaker/qrcodejs"]
+	path = app/AttendanceTaker/static/AttendanceTaker/qrcodejs
+	url = git@github.com:davidshimjs/qrcodejs.git
