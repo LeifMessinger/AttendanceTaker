@@ -1,5 +1,5 @@
 from django import forms
-from .models import Classroom
+from .models import Classroom, Student
 import json
 
 #class MakeRoomForm(forms.Form):
@@ -31,14 +31,20 @@ class MakeRoomForm(forms.ModelForm):
 	class Meta:
 		model = Classroom
 		fields = ["classCode", "classList"]
-		template_name = "MakeRoomForm.html"
 		widgets = {
-			"template_name": "MakeRoomForm.html",
 			#"classCode": forms.CharField(label="Class code", max_length=30, required=False),
 			#"classList": forms.CharField(label="JSON class list", widget=forms.Textarea, required=False)
 		}
 
-class AttendanceForm(forms.Form):
+class AttendanceForm(forms.ModelForm):
 	template_name = "TakeAttendanceForm.html"
-	subject = forms.CharField(label="Your name", max_length=30, required=False)
+	fullName = forms.CharField(label="Full name", max_length=30, required=True),
 	thisIsMe = forms.BooleanField(label="That is me", required=True)
+
+	class Meta:
+		model = Student
+		fields = ["fullName"]
+		widgets = {
+			#"classCode": forms.CharField(label="Class code", max_length=30, required=False),
+			#"classList": forms.CharField(label="JSON class list", widget=forms.Textarea, required=False)
+		}

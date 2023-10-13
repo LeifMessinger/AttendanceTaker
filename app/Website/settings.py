@@ -46,6 +46,21 @@ env = Env()
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ("localhost", "127.0.0.1", "leifstation.local"))
 
+import re
+class RegexHost(str):
+	def lower(self):
+		return self
+
+	def __init__(self, pattern):
+		super().__init__()
+		self.regex = re.compile(pattern)
+
+	def __eq__(self, other):
+		# override the equality operation to use regex matching
+		# instead of str.__eq__(self, other)
+		return self.regex.match(other)
+
+ALLOWED_HOSTS.append(RegexHost(r'192\.168\.[0-9]{1,3}\.[0-9]{1,3}'))
 
 # Application definition
 

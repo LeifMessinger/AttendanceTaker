@@ -8,7 +8,7 @@ class Student(models.Model):
 		primary_key = True,
 		default = uuid.uuid4,
 		editable = False)
-	student_fullname = models.CharField(max_length=200)
+	fullName = models.CharField(max_length=200)
 	#Probably store more data about the student
 	def isTheSame(self, otherStudent):
 		pass #TODO probably just compare `id` keys
@@ -19,15 +19,19 @@ class Student(models.Model):
 		pass #TODO apply attributes from 
 	def attend(self, classroom):
 		#Create AttendanceNote
+		from django.utils import timezone
+		import pytz	#Python Timezone
 		note = AttendanceNote(studentId=self,
-			studentFullName=self.student_fullname,
+			studentFullName=self.fullName,
 			classroomId=classroom,
-			takenTime=int(time.time())
+			takenTime=timezone.localtime(timezone=pytz.timezone("America/Panama"))	#Central time
 		)
 		#Save attendance note
 		note.save()
 		#Add attendance note to classroom
 		classroom.attendanceNotes.add(note)
+		classroom.save()
+
 		#return nothing (the classroom was changed by reference and the caller should save the classroom)
 		return
 #The student manager class is automatically made. It's called Student.objects
