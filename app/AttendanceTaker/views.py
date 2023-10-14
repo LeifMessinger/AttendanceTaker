@@ -63,13 +63,14 @@ def encryptAtTime(binaryString):
 	return encryptedString
 
 #Takes a binary string, returns a binary string, which means you probably gotta .encode() it
-#Which means you'd have to except cryptography.fernet.InvalidToken:, which means you gotta import cryptography
+#Returns None if it is a bad key
 def decryptAtTime(binaryString, numSecondsGood=1000000):
 	from django.conf import settings
 	from cryptography.fernet import Fernet
 	fernet = Fernet(settings.FERNET_KEY)
 
 	import time
+	import cryptography
 	decodedString = fernet.decrypt_at_time(binaryString, numSecondsGood, int(time.time()))
 
 	return decodedString
@@ -93,52 +94,73 @@ def testEncryption(request):
 from .forms import AttendanceForm
 def take_attendance(request, base64String):
 
-	#Check that the link is still good
-	import cryptography #for the error to catch
-	try:
+	# if this is a POST request we need to process the form data
+	if request.method == "POST":
+		# create a form instance and populate it with data from the request:
+		form = AttendanceForm(request.POST or None) #This might create empty rooms, but it probably won't because of that request.method == "POST" line
+		# check whether it's valid:
+		if form.is_valid():	#Cleans the data too...? SQL Sanitization
+			# process the data in form.cleaned_data as required
+			# https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Forms
+
+			# if a GET (or any other method) we'll create a blank form
+			#Check that the link is still good
+			import cryptography #for the error to catch
+			NUM_SECONDS_GOOD = 600 #10 minutes
+			#Theoretically, if someone could send a POST request, they'd have a ten minute window
+			#But if they could write a custom post request in 10 minutes, they deserve to get counted for attendance.
+
+			decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
+			if(decodedString is None):
+				return HttpResponseForbidden("You took too long to fill out the form. Does it really take you 10 minutes to type your name? Try again.")
+
+			#The link is good
+			#Check that the classroom exists
+			try:
+				classroom = Classroom.objects.get(id = decodedString.decode())
+				#The classroom exists
+
+
+			except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
+				from django.http import HttpResponseNotFound
+				return HttpResponseNotFound("We couldn't find the classroom in our database.")
+
+			student, created = Student.objects.get_or_create(fullName=form.cleaned_data["fullName"],
+				defaults={"fullName": form.cleaned_data["fullName"]})
+
+			student.attend(classroom)
+
+			student.save()
+
+			# redirect to a new URL:
+			return HttpResponseRedirect(reverse("done")) #, args=[0])) #or , args={key: "value"}))
+
+		else:	#The form isn't valid
+			#Render the page again
+
+			# if a GET (or any other method) we'll create a blank form
+			#Check that the link is still good
+			import cryptography #for the error to catch
+			NUM_SECONDS_GOOD = 600 #10 minutes
+
+			decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
+			if(decodedString is None):
+				return HttpResponseForbidden("You somehow messed up the form, and it took 10 minutes, which is too long. Try again.")
+
+			return render(request, "home.html", {"form": form})	#The form has a form.errors which will show on reload
+	else:
+		# if a GET (or any other method) we'll create a blank form
+		#Check that the link is still good
+		import cryptography #for the error to catch
 		NUM_SECONDS_GOOD = 10
+
 		decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
-		#The link is good
-		#Check that the classroom exists
-		try:
-			classroom = Classroom.objects.get(id = decodedString.decode())
-			#The classroom exists
+		if(decodedString is None):
+			return HttpResponseForbidden("You took too long to scan the QR code, or the QR code messed up when you scanned it. Try again.")
 
-			# if this is a POST request we need to process the form data
-			if request.method == "POST":
-				# create a form instance and populate it with data from the request:
-				form = AttendanceForm(request.POST or None) #This might create empty rooms, but it probably won't because of that request.method == "POST" line
-				# check whether it's valid:
-				if form.is_valid():	#Cleans the data too...? SQL Sanitization
-					# process the data in form.cleaned_data as required
-					# https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Forms
+		form = AttendanceForm()
 
-					student, created = Student.objects.get_or_create(fullName=form.cleaned_data["fullName"],
-						defaults={"fullName": form.cleaned_data["fullName"]})
-
-					student.attend(classroom)
-
-					student.save()
-
-					# redirect to a new URL:
-					return HttpResponseRedirect(reverse("done")) #, args=[0])) #or , args={key: "value"}))
-
-				else:	#The form isn't valid
-					#Render the page again
-					return render(request, "home.html", {"form": form})	#The form has a form.errors which will show on reload
-			else:
-				# if a GET (or any other method) we'll create a blank form
-				form = AttendanceForm()
-
-				return render(request, "home.html", {"form": form})
-
-		except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
-			from django.http import HttpResponseNotFound
-			return HttpResponseNotFound("We couldn't find the classroom in our database.")
-	#If the link isn't good
-	except cryptography.fernet.InvalidToken:
-		from django.http import HttpResponseForbidden
-		return HttpResponseForbidden("You took too long to scan the QR code, or the QR code messed up when you scanned it. Try again.")
+		return render(request, "home.html", {"form": form})
 
 from django.http import HttpResponse
 def done(request):
@@ -170,6 +192,29 @@ class ClassroomQRCode(APIView):
 		urlSafeB64String = fernet.encrypt_at_time(text.encode(), int(time.time()))
 
 		return Response(urlSafeB64String.decode())
+
+from .models import Classroom
+class ClassroomAttendanceList(APIView):
+	def get(self, request):
+		room_code = request.session.get("room_id")
+		if room_code is None:
+			return Response([])
+
+		try:
+			obj = Classroom.objects.get(id=room_code)
+			#obj["classCode"] = classCode=form.cleaned_data["classCode"]	#Class code is the same anyways
+
+			students = []
+
+			for attendanceNote in obj.attendanceNotes.all():
+				students.append(attendanceNote.studentFullName)
+
+			return Response(students)
+
+		except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
+			#This means we're in the clear, and we can create a new classroom.
+			newClassroom = form.save()
+			request.session["room_id"] = str(newClassroom.id)
 
 from .models import AttendanceNote, Student, Classroom
 from .serializers import AttendanceNoteSerializer, StudentSerializer, ClassroomSerializer

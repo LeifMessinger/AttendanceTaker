@@ -13,6 +13,7 @@ urlpatterns = [
     path("room/", views.room, name="room"),
     path("done/", views.done, name="done"),
     path("ClassroomQRCode/", views.ClassroomQRCode.as_view(), name="ClassroomQRCode"),
+    path("ClassroomAttendanceList/", views.ClassroomAttendanceList.as_view(), name="ClassroomAttendanceList"),
     re_path(r"^(?P<base64String>[-_A-Za-z0-9+=]{50,})/?", views.take_attendance, name="take_attendance"),
     path('', include(router.urls)),
 ]

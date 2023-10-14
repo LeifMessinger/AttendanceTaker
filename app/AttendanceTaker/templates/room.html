@@ -66,4 +66,38 @@
 	<!-- This is where the present people go -->
 	<!-- Make Copy JSON button that queries the server for the present list and puts it in the clipboard -->
 	<!-- Make live attendance with htmx that updates every second. It can just render a template that loops through the students. -->
+	<style>
+		h2 {
+			font-size: 2em;
+		}
+	</style>
+
+	<script>
+		function copyJSONList(){
+			fetch("{% url 'ClassroomAttendanceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((attendanceList)=>{
+				console.log(attendanceList);
+				if(document.location.protocol == "https:"){
+					navigator.clipboard.writeText(JSON.stringify(attendanceList));
+				}else{
+					prompt("Copy the JSON yourself, since the server isn't running HTTPS.", JSON.stringify(attendanceList));
+				}
+			});
+		}
+	</script>
+
+	<h2>Students Present:</h2>
+	<p id="attendanceList"></p>
+	<button onclick="copyJSONList()">Copy JSON</button>
+
+	{% load static %}
+	<script src="{% static 'AttendanceTaker/qrcodejs/qrcode.min.js' %}" type="text/javascript"></script>
+	<script type="text/javascript">
+		const attendanceListElement = document.getElementById("attendanceList");
+
+		setInterval(()=>{
+			fetch("{% url 'ClassroomAttendanceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((attendanceList)=>{
+				attendanceListElement.textContent = attendanceList.sort().join(", ");
+			});
+		}, 1000);
+	</script>
 {% endblock %}
