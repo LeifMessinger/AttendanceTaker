@@ -236,3 +236,6 @@ class StudentViewSet(viewsets.ModelViewSet):
 class ClassroomViewSet(viewsets.ModelViewSet):
 	queryset = Classroom.objects.all()
 	serializer_class = ClassroomSerializer
+
+def debugView(request):
+	raise Exception("Lol")

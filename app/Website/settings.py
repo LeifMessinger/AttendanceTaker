@@ -38,29 +38,34 @@ kdf = PBKDF2HMAC(
 FERNET_KEY = base64.urlsafe_b64encode(kdf.derive(password))
 #FERNET = Fernet(key)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
 
 from environs import Env
 env = Env()
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = env.bool("DJANGO_DEBUG", True)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ("localhost", "127.0.0.1", "leifstation.local"))
+ALLOWED_HOSTS = ['*'] if (not DEBUG) else env.list("ALLOWED_HOSTS", ("localhost", "127.0.0.1", "leifstation.local"))
 
-import re
-class RegexHost(str):
-	def lower(self):
-		return self
+if DEBUG:
+	import re
+	class RegexHost(str):
+		def lower(self):
+			return self
 
-	def __init__(self, pattern):
-		super().__init__()
-		self.regex = re.compile(pattern)
+		def __init__(self, pattern):
+			super().__init__()
+			self.regex = re.compile(pattern)
 
-	def __eq__(self, other):
-		# override the equality operation to use regex matching
-		# instead of str.__eq__(self, other)
-		return self.regex.match(other)
+		def __eq__(self, other):
+			# override the equality operation to use regex matching
+			# instead of str.__eq__(self, other)
+			return self.regex.match(other)
 
-ALLOWED_HOSTS.append(RegexHost(r'192\.168\.[0-9]{1,3}\.[0-9]{1,3}'))
+	ALLOWED_HOSTS.append(RegexHost(r'192\.168\.[0-9]{1,3}\.[0-9]{1,3}'))
+
+import mimetypes
+mimetypes.add_type("text/css", ".css", True)
 
 # Application definition
 
@@ -109,6 +114,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', #add whitenoise
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -186,6 +192,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "static"
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

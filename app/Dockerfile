@@ -1,12 +1,13 @@
 # syntax=docker/dockerfile:1.4
 
-FROM --platform=$BUILDPLATFORM python:3.7-alpine AS builder
+FROM --platform=$BUILDPLATFORM python:3.11.5-alpine AS builder
 EXPOSE 8000
 WORKDIR /app 
 COPY requirements.txt /app
-RUN pip3 install -r requirements.txt --no-cache-dir
+RUN pip install --upgrade pip && pip3 install -r requirements.txt --no-cache-dir
 COPY . /app 
 ENTRYPOINT ["/bin/sh"] 
+ENV DJANGO_DEBUG=False
 CMD ["start.sh"]
 
 FROM builder as dev-envs
@@ -21,4 +22,4 @@ adduser -S --shell /bin/bash --ingroup docker vscode
 EOF
 # install Docker tools (cli, buildx, compose)
 COPY --from=gloursdocker/docker / /
-CMD ["manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["start.sh"]
