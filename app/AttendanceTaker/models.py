@@ -9,6 +9,7 @@ class Student(models.Model):
 		default = uuid.uuid4,
 		editable = False)
 	fullName = models.CharField(max_length=200)
+	ipAddr = models.CharField(max_length=42, null=True)	#Can be null
 	#Probably store more data about the student
 	def isTheSame(self, otherStudent):
 		pass #TODO probably just compare `id` keys

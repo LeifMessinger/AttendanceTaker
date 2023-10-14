@@ -71,9 +71,10 @@ def decryptAtTime(binaryString, numSecondsGood=1000000):
 
 	import time
 	import cryptography
-	decodedString = fernet.decrypt_at_time(binaryString, numSecondsGood, int(time.time()))
-
-	return decodedString
+	try:
+		return fernet.decrypt_at_time(binaryString, numSecondsGood, int(time.time()))
+	except cryptography.fernet.InvalidToken:
+		return None
 #Maybe do it without the time later
 
 def testEncryption(request):
@@ -129,6 +130,10 @@ def take_attendance(request, base64String):
 				defaults={"fullName": form.cleaned_data["fullName"]})
 
 			student.attend(classroom)
+
+			from ipware import get_client_ip
+			ip, is_routable = get_client_ip(request)
+			student.ipAddr = ip
 
 			student.save()
 
