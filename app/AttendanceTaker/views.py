@@ -44,12 +44,12 @@ def make_room(request):
 			return HttpResponseRedirect(reverse("room")) #, args=[0])) #or , args={key: "value"}))
 		else:	#The form isn't valid
 			#Render the page again
-			return render(request, "home.html", {"form": form})	#The form has a form.errors which will show on reload
+			return render(request, "home.html", {"form": form, "submitText": "Create Room"})	#The form has a form.errors which will show on reload
 
 	# if a GET (or any other method) we'll create a blank form
 	form = MakeRoomForm()
 
-	return render(request, "home.html", {"form": form})
+	return render(request, "home.html", {"form": form, "submitText": "Create Room"})
 
 #Takes a binary string, returns a binary string, which means you probably gotta .encode() it
 def encryptAtTime(binaryString):
@@ -152,7 +152,7 @@ def take_attendance(request, base64String):
 			if(decodedString is None):
 				return HttpResponseForbidden("You somehow messed up the form, and it took 10 minutes, which is too long. Try again.")
 
-			return render(request, "home.html", {"form": form})	#The form has a form.errors which will show on reload
+			return render(request, "home.html", {"form": form, "submitText": "Take Attendance"})	#The form has a form.errors which will show on reload
 	else:
 		# if a GET (or any other method) we'll create a blank form
 		#Check that the link is still good
@@ -165,7 +165,7 @@ def take_attendance(request, base64String):
 
 		form = AttendanceForm()
 
-		return render(request, "home.html", {"form": form})
+		return render(request, "home.html", {"form": form, "submitText": "Take Attendance"})
 
 from django.http import HttpResponse
 def done(request):

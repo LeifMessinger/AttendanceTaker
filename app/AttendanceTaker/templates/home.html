@@ -4,7 +4,7 @@
 	<form action="" method="post"> <!-- Posts to the same url as the home page -->
 		{% csrf_token %}
 		{{ form }}
-		<button type="submit">Create room!</button>
+		<button type="submit">{{ submitText }}</button>
 	</form>
 {% endblock %}
 
