@@ -22,23 +22,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-%m^r&a9v(4d3g)h1r8hwc13v0-&545i)v*)#=)2@q7t$4vfsm3'
 
-import base64
-import os
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-password = SECRET_KEY.encode()
-salt = os.urandom(16)
-kdf = PBKDF2HMAC(
-	algorithm=hashes.SHA256(),
-	length=32,
-	salt=salt,
-	iterations=480000,
-)
-FERNET_KEY = base64.urlsafe_b64encode(kdf.derive(password))
-#FERNET = Fernet(key)
+#os.urandom(16) if you want a random salt
+#Redefined in AttendanceTaker/views.py
+def makeFernetKey(salt):
+	import base64
+	import os
+	from cryptography.fernet import Fernet
+	from cryptography.hazmat.primitives import hashes
+	from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+	password = SECRET_KEY.encode()
+	kdf = PBKDF2HMAC(
+		algorithm=hashes.SHA256(),
+		length=32,
+		salt=salt,
+		iterations=480000,
+	)
+	return base64.urlsafe_b64encode(kdf.derive(password))
 
-
+FERNET_KEY = makeFernetKey(b"") #No salt
 
 from environs import Env
 env = Env()

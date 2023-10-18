@@ -75,7 +75,34 @@ def decryptAtTime(binaryString, numSecondsGood=1000000):
 		return fernet.decrypt_at_time(binaryString, numSecondsGood, int(time.time()))
 	except cryptography.fernet.InvalidToken:
 		return None
+
+RECIEPT_SALT = b"reciept" #Don't ever change this. If you do, it'll nullify all of the reciepts out there.
+
+#os.urandom(16) if you want a random salt
+#Redefined in AttendanceTaker/views.py
+def makeFernetKey(salt):
+	import base64
+	import os
+	from django.conf import settings	#For the SECRET_KEY
+	from cryptography.fernet import Fernet
+	from cryptography.hazmat.primitives import hashes
+	from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+	password = settings.SECRET_KEY.encode()
+	kdf = PBKDF2HMAC(
+		algorithm=hashes.SHA256(),
+		length=32,
+		salt=salt,
+		iterations=480000,
+	)
+	return base64.urlsafe_b64encode(kdf.derive(password))
+
 #Maybe do it without the time later
+def serverEncrypt(string, seed):
+	from django.conf import settings
+	from cryptography.fernet import Fernet
+	fernet = Fernet(makeFernetKey(seed))
+
+	return fernet.encrypt(string)
 
 def testEncryption(request):
 	#Encrypt a string
@@ -137,11 +164,7 @@ def take_attendance(request, base64String):
 
 			student.save()
 
-			from django.conf import settings
-			from cryptography.fernet import Fernet
-			fernet = Fernet(settings.FERNET_KEY)
-
-			request.session["reciept"] = fernet.encrypt(str(note).encode()).decode()
+			request.session["reciept"] = serverEncrypt(str(note).encode(), RECIEPT_SALT).decode()
 
 			return HttpResponseRedirect(reverse("done"))
 
