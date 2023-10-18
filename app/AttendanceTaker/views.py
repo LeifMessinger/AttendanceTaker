@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
@@ -129,7 +129,7 @@ def take_attendance(request, base64String):
 			student, created = Student.objects.get_or_create(fullName=form.cleaned_data["fullName"],
 				defaults={"fullName": form.cleaned_data["fullName"]})
 
-			student.attend(classroom)
+			note = student.attend(classroom)
 
 			from ipware import get_client_ip
 			ip, is_routable = get_client_ip(request)
@@ -137,8 +137,13 @@ def take_attendance(request, base64String):
 
 			student.save()
 
-			# redirect to a new URL:
-			return HttpResponseRedirect(reverse("done")) #, args=[0])) #or , args={key: "value"}))
+			from django.conf import settings
+			from cryptography.fernet import Fernet
+			fernet = Fernet(settings.FERNET_KEY)
+
+			request.session["reciept"] = fernet.encrypt(str(note).encode()).decode()
+
+			return HttpResponseRedirect(reverse("done"))
 
 		else:	#The form isn't valid
 			#Render the page again
@@ -169,7 +174,7 @@ def take_attendance(request, base64String):
 
 from django.http import HttpResponse
 def done(request):
-	return HttpResponse("You have taken your own attendance!")
+	return render(request, "done.html", {"reciept": request.session["reciept"]})
 
 def room(request):
 	room_code = request.session.get("room_id")

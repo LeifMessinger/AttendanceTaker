@@ -34,7 +34,7 @@ class Student(models.Model):
 		classroom.save()
 
 		#return nothing (the classroom was changed by reference and the caller should save the classroom)
-		return
+		return note
 #The student manager class is automatically made. It's called Student.objects
 
 class AttendanceNote(models.Model):
@@ -49,6 +49,8 @@ class AttendanceNote(models.Model):
 	takenTime = models.DateTimeField(verbose_name = "attendance taken date")
 	def inTimeRange(self, start, stop):
 		pass #TODO
+	def __str__(self):
+		return 'Student {} attended class at {} in classroom '.format(self.studentFullName, self.takenTime, self.classroomId.classCode)
 
 class Classroom(models.Model):
 	id = models.UUIDField(

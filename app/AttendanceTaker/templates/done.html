@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block middle_content %}
+	<h1>You're all done!</h1>
+	<p>Save this reciept somewhere just in case you need to prove you were in class:</p>
+	<style>
+		.reciept {
+			word-break: break-all;
+		}
+	</style>
+	<div class="reciept">{{ reciept }}</div>
+	<script>
+		function downloadReciept(){
+			const data = "{{ reciept }}";	//This is probably bad practice, but it saves me from having to do document.onload stuff
+
+			const filename = "Reciept" + Date.now() + ".txt";
+
+			var blob = new Blob([data], {type: 'text/json'}),
+			e = document.createEvent('MouseEvents'),
+			a = document.createElement('a')
+
+			a.download = filename
+			a.href = window.URL.createObjectURL(blob)
+			a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
+			e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)	//Wow, isn't that a line
+			a.dispatchEvent(e)
+		}
+	</script>
+	<p><button type="button" onclick="downloadReciept();" style="width: fit-content;">Download</button> it, or just screenshot this page.</p>
+{% endblock %}
+
+{% block right_content %}
+	<button type="button" onclick="window.open('', '_self', ''); window.close();">Exit page</button>
+{% endblock %}
