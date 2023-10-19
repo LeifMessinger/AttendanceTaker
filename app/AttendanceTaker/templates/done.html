@@ -1,14 +1,15 @@
 {% extends "layout.html" %}
 
 {% block middle_content %}
-	<h1>You're all done!</h1>
-	<p>Save this reciept somewhere just in case you need to prove you were in class:</p>
+	<h1>You're all done!</h1><br/>
+	<p>Save this reciept somewhere just in case you need to prove you were in class:</p><br />
 	<style>
 		.reciept {
 			word-break: break-all;
+			font-family: monospace;
 		}
 	</style>
-	<div class="reciept">{{ reciept }}</div>
+	<div class="reciept">{{ reciept }}</div><br />
 	<script>
 		function downloadReciept(){
 			const data = "{{ reciept }}";	//This is probably bad practice, but it saves me from having to do document.onload stuff
@@ -30,5 +31,7 @@
 {% endblock %}
 
 {% block right_content %}
-	<button type="button" onclick="window.open('', '_self', ''); window.close();">Exit page</button>
+	<!-- Doesn't work
+		<button type="button" onclick="window.open('', '_self', ''); window.close();">Exit page</button>
+	-->
 {% endblock %}

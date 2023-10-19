@@ -180,7 +180,7 @@ def take_attendance(request, base64String):
 			if(decodedString is None):
 				return HttpResponseForbidden("You somehow messed up the form, and it took 10 minutes, which is too long. Try again.")
 
-			return render(request, "home.html", {"form": form, "submitText": "Take Attendance"})	#The form has a form.errors which will show on reload
+			return render(request, "TakeAttendance.html", {"form": form, "submitText": "Take Attendance"})	#The form has a form.errors which will show on reload
 	else:
 		# if a GET (or any other method) we'll create a blank form
 		#Check that the link is still good
@@ -193,7 +193,7 @@ def take_attendance(request, base64String):
 
 		form = AttendanceForm()
 
-		return render(request, "home.html", {"form": form, "submitText": "Take Attendance"})
+		return render(request, "TakeAttendance.html", {"form": form, "submitText": "Take Attendance"})
 
 from django.http import HttpResponse
 def done(request):

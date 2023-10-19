@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block middle_content %}
+	<form action="" method="post"> <!-- Posts to the same url as the home page -->
+		{% csrf_token %}
+		{{ form }}
+		<button type="submit">{{ submitText }}</button>
+	</form>
+{% endblock %}
+
+{% block right_content %}
+	Attendance Taker v0.0
+{% endblock %}
