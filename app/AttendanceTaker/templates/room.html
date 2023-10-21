@@ -1,7 +1,29 @@
 {% extends "layout.html" %}
-
 {% block left_content %}
-	<!-- This is where the absent people go, if classList was defined -->
+	<!-- This is where the present people go -->
+	<!-- Make Copy JSON button that queries the server for the present list and puts it in the clipboard -->
+	<!-- Make live attendance with htmx that updates every second. It can just render a template that loops through the students. -->
+	<style>
+		h2 {
+			font-size: 200%;
+		}
+	</style>
+
+	<h2>Absent:</h2>
+	<p id="absenceList"></p>
+
+	{% load static %}
+	<script src="{% static 'AttendanceTaker/qrcodejs/qrcode.min.js' %}" type="text/javascript"></script>
+	<script type="text/javascript">
+		const absenceListElement = document.getElementById("absenceList");
+
+		setInterval(()=>{
+			fetch("{% url 'ClassroomAbsenceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((absenceList)=>{
+				console.log(absenceList);
+				absenceListElement.textContent = absenceList.sort().join(", ");
+			});
+		}, 1000);
+	</script>
 {% endblock %}
 
 {% block middle_content %}
@@ -68,7 +90,7 @@
 	<!-- Make live attendance with htmx that updates every second. It can just render a template that loops through the students. -->
 	<style>
 		h2 {
-			font-size: 2em;
+			font-size: 200%;
 		}
 	</style>
 
@@ -85,7 +107,7 @@
 		}
 	</script>
 
-	<h2>Students Present:</h2>
+	<h2>Present:</h2>
 	<p id="attendanceList"></p>
 	<button onclick="copyJSONList()">Copy JSON</button>
 

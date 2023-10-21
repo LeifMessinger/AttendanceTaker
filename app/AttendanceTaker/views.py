@@ -164,6 +164,39 @@ class ClassroomAttendanceList(APIView):
 			newClassroom = form.save()
 			request.session["room_id"] = str(newClassroom.id)
 
+from .models import Classroom
+class ClassroomAbsenceList(APIView):
+	def get(self, request):
+		room_code = request.session.get("room_id")
+		if room_code is None:
+			return Response([])
+
+		try:
+			obj = Classroom.objects.get(id=room_code)
+			#obj["classCode"] = classCode=form.cleaned_data["classCode"]	#Class code is the same anyways
+
+			if obj.classList == "":
+				return Response(["To use the absence list", "you need to input the JSON class list."])
+
+			import json
+			from json.decoder import JSONDecodeError
+			try:
+				absenceList = json.loads(obj.classList)
+
+				for attendanceNote in obj.attendanceNotes.all():
+					studentFullName = attendanceNote.studentFullName
+					if studentFullName in absenceList:
+						absenceList.remove(studentFullName)
+				return Response(absenceList)
+			except JSONDecodeError as e:
+				return Response(["Server error occured", str(e), obj.classList])
+			return Response([])
+
+		except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
+			#This means we're in the clear, and we can create a new classroom.
+			newClassroom = form.save()
+			request.session["room_id"] = str(newClassroom.id)
+
 from .models import AttendanceNote, Student, Classroom
 from .serializers import AttendanceNoteSerializer, StudentSerializer, ClassroomSerializer
 from rest_framework import viewsets
