@@ -9,10 +9,11 @@
 {% endblock %}
 
 {% block right_content %}
-	Attendance Taker {{ attendanceTakerVersion }}<br />
+	<p>Attendance Taker {{ attendanceTakerVersion }}</p><br />
 	<a href="{% url 'verifyReciept' %}">Reciept Verifier</a><br />
 	<br />
 	Bookmarklets:<br />
 	<a href="javascript:(function()%7Bconst%20users%20%3D%20Array.from(document.querySelectorAll(%22.rosterUser%22)).map((person)%3D%3E%7B%0A%20%20return%20%7B%22name%22%3A%20person.querySelector(%22.roster_user_name%22).textContent.trim()%2C%0A%20%20%20%20%22role%22%3A%20person.children%5B3%5D.textContent.trim()%0A%20%20%7D%3B%0A%7D)%3B%0A%0A%2F%2F%20Step%201%3A%20Filter%20names%20where%20role%20is%20%22Student%22%20and%20remove%20pronouns%0Aconst%20studentList%20%3D%20users%0A%20%20.filter(user%20%3D%3E%20user.role%20%3D%3D%3D%20%22Student%22)%0A%20%20.map(user%20%3D%3E%20user.name.replace(%2F(%5C(.%2B%5C))%2Fg%2C%20%22%22).trim())%3B%0A%0A%2F%2F%20Step%202%3A%20Identify%20and%20handle%20duplicates%0Aconst%20duplicates%20%3D%20%5B%5D%3B%0Afor%20(let%20i%20%3D%200%3B%20i%20%3C%20studentList.length%3B%20i%2B%2B)%20%7B%0A%20%20for%20(let%20j%20%3D%20i%20%2B%201%3B%20j%20%3C%20studentList.length%3B%20j%2B%2B)%20%7B%0A%20%20%20%20if%20(studentList%5Bi%5D%20%3D%3D%3D%20studentList%5Bj%5D)%20%7B%0A%20%20%20%20%20%20duplicates.push(studentList%5Bi%5D)%3B%0A%20%20%20%20%20%20studentList.splice(j%2C%201)%3B%0A%20%20%20%20%20%20j--%3B%20%2F%2F%20Adjust%20the%20index%20because%20of%20the%20splice%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%0A%2F%2F%20Step%203%3A%20Prompt%20the%20teacher%20with%20the%20final%20list%0Aconst%20result%20%3D%20JSON.stringify(studentList)%3B%0A%0Aif%20(duplicates.length%20%3E%200)%20%7B%0A%20%20alert(%22Duplicates%20found%3A%20%22%20%2B%20JSON.stringify(duplicates))%3B%0A%7D%20else%20%7B%0A%20%20%20prompt(%22v%20%20Copy%20the%20JSON%20list%20of%20students%20below%20%20v%22%2C%20JSON.stringify(studentList))%3B%0A%7D%7D)()%3B">CanvasClassList</a><br />
+	<p>Don't forget to scroll all the way to the bottom to get the freshest names.</p><br />
 	<u class="formError">GradeClassList</u><br />
 {% endblock %}
