@@ -57,37 +57,37 @@ def make_room(request):
 #This is our homepage
 from .forms import AttendanceForm
 def take_attendance(request, base64String):
+	# if a GET (or any other method) we'll create a blank form
+	form = AttendanceForm(request.POST or None)
+
+	#Check that the link is still good
+	#Theoretically, if someone could send a POST request, they'd have a ten minute window
+	#But if they could write a custom post request in 10 minutes, they deserve to get counted for attendance.
+	NUM_SECONDS_GOOD = 600 #10 minutes
+	decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
+	if(decodedString is None):
+		return HttpResponseForbidden("You took too long to fill out the form. Does it really take you 10 minutes to type your name? Try again.")
+
+	#The link is good
+	#Check that the classroom exists
+	try:
+		classroom = Classroom.objects.get(id = decodedString.decode())
+		#The classroom exists
+	except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
+		from django.http import HttpResponseNotFound
+		return HttpResponseNotFound("We couldn't find the classroom in our database.")
+
+	import json
+	if classroom.classList:
+		form.fields['fullName'].options = json.loads(classroom.classList)
+		print(classroom.classList)
 
 	# if this is a POST request we need to process the form data
 	if request.method == "POST":
-		# create a form instance and populate it with data from the request:
-		form = AttendanceForm(request.POST or None) #This might create empty rooms, but it probably won't because of that request.method == "POST" line
 		# check whether it's valid:
 		if form.is_valid():	#Cleans the data too...? SQL Sanitization
 			# process the data in form.cleaned_data as required
 			# https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Forms
-
-			# if a GET (or any other method) we'll create a blank form
-			#Check that the link is still good
-			import cryptography #for the error to catch
-			NUM_SECONDS_GOOD = 600 #10 minutes
-			#Theoretically, if someone could send a POST request, they'd have a ten minute window
-			#But if they could write a custom post request in 10 minutes, they deserve to get counted for attendance.
-
-			decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
-			if(decodedString is None):
-				return HttpResponseForbidden("You took too long to fill out the form. Does it really take you 10 minutes to type your name? Try again.")
-
-			#The link is good
-			#Check that the classroom exists
-			try:
-				classroom = Classroom.objects.get(id = decodedString.decode())
-				#The classroom exists
-
-
-			except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
-				from django.http import HttpResponseNotFound
-				return HttpResponseNotFound("We couldn't find the classroom in our database.")
 
 			student, created = Student.objects.get_or_create(fullName=form.cleaned_data["fullName"],
 				defaults={"fullName": form.cleaned_data["fullName"]})
@@ -105,30 +105,9 @@ def take_attendance(request, base64String):
 			return HttpResponseRedirect(reverse("done"))
 
 		else:	#The form isn't valid
-			#Render the page again
-
-			# if a GET (or any other method) we'll create a blank form
-			#Check that the link is still good
-			import cryptography #for the error to catch
-			NUM_SECONDS_GOOD = 600 #10 minutes
-
-			decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
-			if(decodedString is None):
-				return HttpResponseForbidden("You somehow messed up the form, and it took 10 minutes, which is too long. Try again.")
-
+			#Rerender
 			return render(request, "TakeAttendance.html", {"form": form, "submitText": "Take Attendance", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})	#The form has a form.errors which will show on reload
 	else:
-		# if a GET (or any other method) we'll create a blank form
-		#Check that the link is still good
-		import cryptography #for the error to catch
-		NUM_SECONDS_GOOD = 10
-
-		decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
-		if(decodedString is None):
-			return HttpResponseForbidden("You took too long to scan the QR code, or the QR code messed up when you scanned it. Try again.")
-
-		form = AttendanceForm()
-
 		return render(request, "TakeAttendance.html", {"form": form, "submitText": "Take Attendance", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
 
 from django.http import HttpResponse

@@ -4,6 +4,7 @@ import json
 
 from .encryption import serverDecrypt, RECIEPT_SALT
 
+
 #class MakeRoomForm(forms.Form):
 #	template_name = "MakeRoomForm.html"
 #	classCode = forms.CharField(label="Class code", max_length=30, required=False)
@@ -40,7 +41,12 @@ class MakeRoomForm(forms.ModelForm):
 
 class AttendanceForm(forms.ModelForm):
 	template_name = "TakeAttendanceForm.html"
-	fullName = forms.CharField(label="Full name", max_length=30, required=True),
+	fullName = forms.CharField(label="Full name", max_length=100, required=True)
+	fullName.widget.attrs.update({
+		'autoComplete': 'on',
+		'list': 'fullNameOptions',
+		'placeholder': 'First Last'
+	})
 	thisIsMe = forms.BooleanField(label="That is me", required=True)
 
 	class Meta:
