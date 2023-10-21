@@ -2,6 +2,8 @@ from django import forms
 from .models import Classroom, Student
 import json
 
+from .encryption import serverDecrypt, RECIEPT_SALT
+
 #class MakeRoomForm(forms.Form):
 #	template_name = "MakeRoomForm.html"
 #	classCode = forms.CharField(label="Class code", max_length=30, required=False)
@@ -48,3 +50,15 @@ class AttendanceForm(forms.ModelForm):
 			#"classCode": forms.CharField(label="Class code", max_length=30, required=False),
 			#"classList": forms.CharField(label="JSON class list", widget=forms.Textarea, required=False)
 		}
+
+class RecieptForm(forms.Form):
+	template_name = "RecieptForm.html"
+	reciept = forms.CharField(label="Reciept", help_text="A bunch of jumbled text you got when you took attendance.", widget=forms.Textarea, required=False)
+	def clean_reciept(self):
+		data = self.cleaned_data['reciept']
+		#print("First character:", data[0], "Last character:", data[-1])	#Wow, django .trim()s whitespace
+		import re
+		if(not bool(re.match('^[a-zA-Z0-9_-]+$', data))):
+			raise forms.ValidationError("The pasted text wasn't a url safe base64 string. Try again.")
+		else:
+			return data

@@ -2,9 +2,12 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
+from .encryption import serverEncrypt, serverDecrypt, encryptAtTime, decryptAtTime, RECIEPT_SALT
 from .forms import MakeRoomForm
 
 from .models import Classroom
+
+ATTENDANCE_TAKER_VERSION = "v1.0"
 
 #This is our homepage
 def make_room(request):
@@ -44,79 +47,12 @@ def make_room(request):
 			return HttpResponseRedirect(reverse("room")) #, args=[0])) #or , args={key: "value"}))
 		else:	#The form isn't valid
 			#Render the page again
-			return render(request, "home.html", {"form": form, "submitText": "Create Room"})	#The form has a form.errors which will show on reload
+			return render(request, "home.html", {"form": form, "submitText": "Create Room", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})	#The form has a form.errors which will show on reload
 
 	# if a GET (or any other method) we'll create a blank form
 	form = MakeRoomForm()
 
-	return render(request, "home.html", {"form": form, "submitText": "Create Room"})
-
-#Takes a binary string, returns a binary string, which means you probably gotta .encode() it
-def encryptAtTime(binaryString):
-	from django.conf import settings
-	from cryptography.fernet import Fernet
-	fernet = Fernet(settings.FERNET_KEY)
-
-	import time
-	urlSafeB64String = fernet.encrypt_at_time(binaryString, int(time.time()))
-
-	return encryptedString
-
-#Takes a binary string, returns a binary string, which means you probably gotta .encode() it
-#Returns None if it is a bad key
-def decryptAtTime(binaryString, numSecondsGood=1000000):
-	from django.conf import settings
-	from cryptography.fernet import Fernet
-	fernet = Fernet(settings.FERNET_KEY)
-
-	import time
-	import cryptography
-	try:
-		return fernet.decrypt_at_time(binaryString, numSecondsGood, int(time.time()))
-	except cryptography.fernet.InvalidToken:
-		return None
-
-RECIEPT_SALT = b"reciept" #Don't ever change this. If you do, it'll nullify all of the reciepts out there.
-
-#os.urandom(16) if you want a random salt
-#Redefined in AttendanceTaker/views.py
-def makeFernetKey(salt):
-	import base64
-	import os
-	from django.conf import settings	#For the SECRET_KEY
-	from cryptography.fernet import Fernet
-	from cryptography.hazmat.primitives import hashes
-	from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-	password = settings.SECRET_KEY.encode()
-	kdf = PBKDF2HMAC(
-		algorithm=hashes.SHA256(),
-		length=32,
-		salt=salt,
-		iterations=480000,
-	)
-	return base64.urlsafe_b64encode(kdf.derive(password))
-
-#Maybe do it without the time later
-def serverEncrypt(string, seed):
-	from django.conf import settings
-	from cryptography.fernet import Fernet
-	fernet = Fernet(makeFernetKey(seed))
-
-	return fernet.encrypt(string)
-
-def testEncryption(request):
-	#Encrypt a string
-	urlSafeB64String = encryptAtTime(b"Bruhh")
-	text += "\n" + "Encoded: " + urlSafeB64String.decode()
-
-	#Decrypt a string
-	try:
-		decodedString = decryptAtTime(urlSafeB64String, NUM_SECONDS_GOOD)
-		text += "\n" + "Decoded: " + decodedString.decode()
-	except cryptography.fernet.InvalidToken:
-		text += "\n" + "Decoded: " + "TOOK TOO LONG BUDDY BOYYY"
-
-	return HttpResponse(text)
+	return render(request, "home.html", {"form": form, "submitText": "Create Room", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
 
 #This is our homepage
 from .forms import AttendanceForm
@@ -180,7 +116,7 @@ def take_attendance(request, base64String):
 			if(decodedString is None):
 				return HttpResponseForbidden("You somehow messed up the form, and it took 10 minutes, which is too long. Try again.")
 
-			return render(request, "TakeAttendance.html", {"form": form, "submitText": "Take Attendance"})	#The form has a form.errors which will show on reload
+			return render(request, "TakeAttendance.html", {"form": form, "submitText": "Take Attendance", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})	#The form has a form.errors which will show on reload
 	else:
 		# if a GET (or any other method) we'll create a blank form
 		#Check that the link is still good
@@ -193,15 +129,15 @@ def take_attendance(request, base64String):
 
 		form = AttendanceForm()
 
-		return render(request, "TakeAttendance.html", {"form": form, "submitText": "Take Attendance"})
+		return render(request, "TakeAttendance.html", {"form": form, "submitText": "Take Attendance", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
 
 from django.http import HttpResponse
 def done(request):
-	return render(request, "done.html", {"reciept": request.session["reciept"]})
+	return render(request, "done.html", {"reciept": request.session["reciept"], "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
 
 def room(request):
 	room_code = request.session.get("room_id")
-	return render(request, "room.html", { "room_code": room_code })
+	return render(request, "room.html", { "room_code": room_code, "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
 
 
 # API stuff
@@ -267,3 +203,22 @@ class ClassroomViewSet(viewsets.ModelViewSet):
 
 def debugView(request):
 	raise Exception("Lol")
+
+#Verify a reciept
+from .forms import RecieptForm
+def verifyReciept(request):
+	# if this is a POST request we need to process the form data
+	if request.method == "POST":
+		# create a form instance and populate it with data from the request:
+		form = RecieptForm(request.POST)
+		# check whether it's valid:
+		if form.is_valid():	#Cleans the data too...? SQL Sanitization
+			decrypted = serverDecrypt((form.cleaned_data["reciept"]).encode(), RECIEPT_SALT);
+			if(decrypted is None):
+				return HttpResponse("It failed to decrypt the reciept. It's probably not geniuine, but maybe if you try it again you'll have better luck.");
+			return HttpResponse(decrypted.decode());
+		else:	#The form isn't valid. Probably shouldn't get here.
+			return render(request, "VerifyReciept.html", {"form": form, "submitText": "Take Attendance", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})	#The form has a form.errors which will show on reload
+	else:
+		form = RecieptForm()
+		return render(request, "VerifyReciept.html", {"form": form, "submitText": "Verify Reciept", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})

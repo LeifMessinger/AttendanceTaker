@@ -1,6 +1,11 @@
 {% extends "layout.html" %}
 
+{% block left_content %}
+	^&emsp;Hit the back button to go back
+{% endblock %}
+
 {% block middle_content %}
+	<h2 style="font-size: 200%; margin: 0 auto 0 auto;">Paste the reciept from the student.</h2>
 	<form action="" method="post"> <!-- Posts to the same url as the home page -->
 		{% csrf_token %}
 		{{ form }}
@@ -9,10 +14,5 @@
 {% endblock %}
 
 {% block right_content %}
-	Attendance Taker {{ attendanceTakerVersion }}<br />
-	<a href="{% url 'verifyReciept' %}">Reciept Verifier</a><br />
-	<br />
-	Bookmarklets:<br />
-	<u class="formError">CanvasClassList</u><br />
-	<u class="formError">GradeClassList</u><br />
+	Attendance Taker {{ attendanceTakerVersion }}
 {% endblock %}
