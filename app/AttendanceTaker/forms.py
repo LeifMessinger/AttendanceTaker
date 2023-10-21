@@ -12,8 +12,14 @@ from .encryption import serverDecrypt, RECIEPT_SALT
 
 class MakeRoomForm(forms.ModelForm):
 	template_name = "MakeRoomForm.html"
-	classCode = forms.CharField(label="Class code", max_length=30, required=False),
+	classCode = forms.CharField(label="Class code", max_length=30, required=False)
+	classCode.widget.attrs.update({
+		'placeholder': 'optional'
+	})
 	classList = forms.CharField(label="JSON class list", widget=forms.Textarea, required=False)
+	classList.widget.attrs.update({
+		'placeholder': '["optional"]'
+	})
 
 	def clean_classList(self):
 		data = self.cleaned_data['classList']
