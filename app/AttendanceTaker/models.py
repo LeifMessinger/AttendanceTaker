@@ -59,4 +59,39 @@ class Classroom(models.Model):
 		editable = False)
 	classCode = models.CharField(max_length=30, blank=True)
 	classList = models.TextField(blank=True) #JSON string
+	@staticmethod
+	def cleanClassList(classListAsAString):
+		from django import forms
+		import json
+		if isinstance(classListAsAString, str):
+			try:
+				loadedData = json.loads(classListAsAString)
+				if isinstance(loadedData, list):
+					for string in loadedData:
+						if not isinstance(string, str):
+							raise forms.ValidationError("The JSON array wasn't entirely strings.")
+					return loadedData
+				else:
+					raise forms.ValidationError("The JSON data wasn't an array.")
+			except json.JSONDecodeError:
+				def trySplitString(string, separator):
+					array = string.split(separator)
+					if len(array) < 3:	#We assume that people want to have more names than 3 people
+						return None
+					return array
+				array = trySplitString(classListAsAString, ", ") or trySplitString(classListAsAString, ",") or trySplitString(classListAsAString, "\t") or trySplitString(classListAsAString, "\r\n") or trySplitString(classListAsAString, "\n")
+				if array is None:
+					raise forms.ValidationError("The JSON data was invalid, the comma/tab/newline separated list is invalid or has less than 3 students.")
+				return array
+			return []
+		else:
+			#raise forms.ValidationError("The server messed that one up somehow.")
+			return []
+	def getClassList(self):
+		string = None
+		try:
+			string = self.cleanClassList(str(self.classList))
+		except Exception:
+			return None
+		return string
 	attendanceNotes = models.ManyToManyField(AttendanceNote)

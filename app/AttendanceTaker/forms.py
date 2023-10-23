@@ -16,25 +16,16 @@ class MakeRoomForm(forms.ModelForm):
 	classCode.widget.attrs.update({
 		'placeholder': 'optional'
 	})
-	classList = forms.CharField(label="JSON class list", widget=forms.Textarea, required=False)
+	classList = forms.CharField(label="Class list", widget=forms.Textarea, required=False)
 	classList.widget.attrs.update({
-		'placeholder': '["optional"]'
+		'placeholder': 'optional\n\n["Json", "string", "array"]\n\nComma,Separated,Values\n\nNewline\nSeparated\nValues'
 	})
 
 	def clean_classList(self):
 		data = self.cleaned_data['classList']
 		if data == "": #Allow data to be blank
 			return data
-		try:
-			loadedData = json.loads(data)
-			if isinstance(loadedData, list):
-				for string in loadedData:
-					if not isinstance(string, str):
-						raise forms.ValidationError("The JSON array wasn't entirely strings.")
-			else:
-				raise forms.ValidationError("The JSON data wasn't an array.")
-		except json.JSONDecodeError:
-			raise forms.ValidationError("The JSON data was invalid.")
+		Classroom.cleanClassList(data)
 		return data
 
 	class Meta:

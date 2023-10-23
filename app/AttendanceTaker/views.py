@@ -79,8 +79,7 @@ def take_attendance(request, base64String):
 
 	import json
 	if classroom.classList:
-		form.fields['fullName'].options = json.loads(classroom.classList)
-		print(classroom.classList)
+		form.fields['fullName'].options = classroom.getClassList()
 
 	# if this is a POST request we need to process the form data
 	if request.method == "POST":
@@ -178,18 +177,16 @@ class ClassroomAbsenceList(APIView):
 			if obj.classList == "":
 				return Response(["To use the absence list", "you need to input the JSON class list."])
 
-			import json
-			from json.decoder import JSONDecodeError
-			try:
-				absenceList = json.loads(obj.classList)
+			absenceList = obj.getClassList()
+			if absenceList is None:
+				return Response(["Server error", absenceList, absenceList.__class__.__name__])
 
-				for attendanceNote in obj.attendanceNotes.all():
-					studentFullName = attendanceNote.studentFullName
-					if studentFullName in absenceList:
-						absenceList.remove(studentFullName)
-				return Response(absenceList)
-			except JSONDecodeError as e:
-				return Response(["Server error occured", str(e), obj.classList])
+			for attendanceNote in obj.attendanceNotes.all():
+				studentFullName = attendanceNote.studentFullName
+				if studentFullName in absenceList:
+					absenceList.remove(studentFullName)
+			return Response(absenceList)
+
 			return Response([])
 
 		except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
