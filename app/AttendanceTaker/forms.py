@@ -18,7 +18,7 @@ class MakeRoomForm(forms.ModelForm):
 	})
 	classList = forms.CharField(label="Class list", widget=forms.Textarea, required=False)
 	classList.widget.attrs.update({
-		'placeholder': 'optional\n\n["Json", "string", "array"]\n\nComma,Separated,Values\n\nNewline\nSeparated\nValues'
+		'placeholder': 'optional\n\n["Json", "string", "array"]\n\nComma,Separated,Values  or  Tab\tSeparated\tValues\n\nNewline\nSeparated\nValues'
 	})
 
 	def clean_classList(self):

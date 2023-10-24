@@ -19,7 +19,7 @@
 
 		setInterval(()=>{
 			fetch("{% url 'ClassroomAbsenceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((absenceList)=>{
-				console.log(absenceList);
+				//console.log(absenceList);
 				absenceListElement.textContent = absenceList.sort().join(", ");
 			});
 		}, 1000);
@@ -95,20 +95,27 @@
 	</style>
 
 	<script>
+		function copyString(string){
+			if(document.location.protocol == "https:"){
+				navigator.clipboard.writeText(string);
+			}else{
+				prompt("Copy the JSON yourself, since the server isn't running HTTPS.", string);
+			}
+		}
 		function copyJSONList(){
 			fetch("{% url 'ClassroomAttendanceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((attendanceList)=>{
 				console.log(attendanceList);
-				if(document.location.protocol == "https:"){
-					navigator.clipboard.writeText(JSON.stringify(attendanceList));
-				}else{
-					prompt("Copy the JSON yourself, since the server isn't running HTTPS.", JSON.stringify(attendanceList));
-				}
+				copyString(JSON.stringify(attendanceList));
 			});
+		}
+		function copyCSVList(){
+			//NOT YET IMPLEMENTED
 		}
 	</script>
 
-	<h2>Present:</h2>
+	<h2><div id="presentNumber" style="display: inline;"></div> Present:</h2>
 	<p id="attendanceList"></p>
+	<!--<button onclick="copyCSVList()">Copy CSV</button> Uncomment this to test your button-->
 	<button onclick="copyJSONList()">Copy JSON</button>
 
 	{% load static %}
