@@ -28,16 +28,20 @@ function copyString(text){
     console.warn("They finally deprecated document.execCommand!");
   }
   if(document.location.protocol == "https:"){
-    navigator.clipboard.writeText(text).catch(()=>{
+    navigator.clipboard.writeText(text).then(()=>{
+      alert("Copied string to clipboard.");
+    }).catch(()=>{
       const input = document.createElement('textarea');
       input.value = text;
       document.body.appendChild(input);
       input.select();
       const success = document.execCommand('copy');
       document.body.removeChild(input);
-
+      
       if(!success){
         prompt("Copy failed. Might have ... somewhere. Check console.", text);
+      }else{
+        alert("Copied string to clipboard.");
       }
     });
   }else{
@@ -47,9 +51,11 @@ function copyString(text){
     input.select();
     const success = document.execCommand('copy');
     document.body.removeChild(input);
-
+    
     if(!success){
       prompt("Copy failed. Might have ... somewhere. Check console.", text);
+    }else{
+      alert("Copied string to clipboard.");
     }
   }
 }
