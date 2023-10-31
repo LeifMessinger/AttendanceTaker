@@ -16,7 +16,40 @@ for (let i = 0; i < studentList.length; i++) {
     if (studentList[i] === studentList[j]) {
       duplicates.push(studentList[i]);
       studentList.splice(j, 1);
+      debugger
       j--; // Adjust the index because of the splice
+    }
+  }
+}
+
+function copyString(text){
+  //Could be refactored a little bit for repetition
+  if(!(document.execCommand)){
+    console.warn("They finally deprecated document.execCommand!");
+  }
+  if(document.location.protocol == "https:"){
+    navigator.clipboard.writeText(text).catch(()=>{
+      const input = document.createElement('textarea');
+      input.value = text;
+      document.body.appendChild(input);
+      input.select();
+      const success = document.execCommand('copy');
+      document.body.removeChild(input);
+
+      if(!success){
+        prompt("Copy failed. Might have ... somewhere. Check console.", text);
+      }
+    });
+  }else{
+    const input = document.createElement('textarea');
+    input.value = text;
+    document.body.appendChild(input);
+    input.select();
+    const success = document.execCommand('copy');
+    document.body.removeChild(input);
+
+    if(!success){
+      prompt("Copy failed. Might have ... somewhere. Check console.", text);
     }
   }
 }
@@ -27,5 +60,7 @@ const result = JSON.stringify(studentList);
 if (duplicates.length > 0) {
   alert("Duplicates found: " + JSON.stringify(duplicates));
 } else {
-  prompt("v  Copy the JSON list of students below  v", JSON.stringify(studentList));
+  copyString(result);
 }
+
+console.log(result);

@@ -24,7 +24,7 @@
 		setInterval(()=>{
 			fetch("{% url 'ClassroomAbsenceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((absenceList)=>{
 				//console.log(absenceList);
-				absenceListElement.textContent = absenceList.sort().join(", ");
+				absenceListElement.textContent = absenceList.sort().join("\n");
 			});
 		}, 1000);
 	</script>
@@ -96,14 +96,42 @@
 		h2 {
 			font-size: 200%;
 		}
+		#attendanceList{
+			max-height: 90vh;
+			overflow: scroll;
+		}
 	</style>
 
 	<script>
-		function copyString(string){
+		function copyString(text){
+			//Could be refactored a little bit for repetition
+			if(!(document.execCommand)){
+				console.warn("They finally deprecated document.execCommand!");
+			}
 			if(document.location.protocol == "https:"){
-				navigator.clipboard.writeText(string);
+				navigator.clipboard.writeText(text).catch(()=>{
+					const input = document.createElement('textarea');
+					input.value = text;
+					document.body.appendChild(input);
+					input.select();
+					const success = document.execCommand('copy');
+					document.body.removeChild(input);
+
+					if(!success){
+						prompt("Copy failed. Might have ... somewhere. Check console.", text);
+					}
+				});
 			}else{
-				prompt("Copy the JSON yourself, since the server isn't running HTTPS.", string);
+				const input = document.createElement('textarea');
+				input.value = text;
+				document.body.appendChild(input);
+				input.select();
+				const success = document.execCommand('copy');
+				document.body.removeChild(input);
+
+				if(!success){
+					prompt("Copy failed. Might have ... somewhere. Check console.", text);
+				}
 			}
 		}
 		function copyJSONList(){
@@ -129,7 +157,7 @@
 
 		setInterval(()=>{
 			fetch("{% url 'ClassroomAttendanceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((attendanceList)=>{
-				attendanceListElement.textContent = attendanceList.sort().join(", ");
+				attendanceListElement.textContent = attendanceList.sort().join("\n");
 			});
 		}, 1000);
 	</script>
