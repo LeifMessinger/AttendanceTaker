@@ -173,13 +173,9 @@
 				name.textContent = studentName;
 
 				const studentSusReasons = details[studentName];
-				//console.log(details, studentName, studentSusReasons);
 				if (studentSusReasons.length > 0) {	//The color becomes the first issue in the list, which should be the most important one.
 					const errorCode = studentSusReasons[0][0];	//[0] First error [0] error code
-					console.log(errorCode, studentSusReasons);
-					//console.log(errorCode);
 					name.style.setProperty("color", errorCodes[errorCode]);
-					//console.log(errorCodes, errorCode, errorCodes[errorCode]);
 					function stringifyErrors(errors){
 						str = "";
 						for(let error of errors){
