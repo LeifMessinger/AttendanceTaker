@@ -18,18 +18,28 @@ class Student(models.Model):
 		return a.isTheSame(b)
 	def apply(self, otherStudent):
 		pass #TODO apply attributes from 
-	def attend(self, classroom):
+	def attend(self, classroom, reasons=[]):
 		#Create AttendanceNote
+		#If the student has already taken attendance
+		try:
+			note = classroom.attendanceNotes.get(studentId=self.id)
+			return note	#Return the note that already exists. No taking attendance twice.
+		except AttendanceNote.DoesNotExist:
+			pass
+
 		from django.utils import timezone
 		import pytz	#Python Timezone
+		import json
 		note = AttendanceNote(studentId=self,
 			studentFullName=self.fullName,
 			classroomId=classroom,
-			takenTime=timezone.localtime(timezone=pytz.timezone("America/Panama"))	#Central time
+			takenTime=timezone.localtime(timezone=pytz.timezone("America/Panama")),	#Central time
+			reasons=json.dumps(reasons)
 		)
 		#Save attendance note
 		note.save()
 		#Add attendance note to classroom
+
 		classroom.attendanceNotes.add(note)
 		classroom.save()
 
@@ -47,6 +57,7 @@ class AttendanceNote(models.Model):
 	studentFullName = models.CharField(max_length=200)
 	classroomId = models.ForeignKey('AttendanceTaker.Classroom', on_delete=models.CASCADE)	#Maybe just SET_NULL or SET(AttendanceNote(someFillerOpts)). SET_NULL requires null=True for the foreign key tho.
 	takenTime = models.DateTimeField(verbose_name = "attendance taken date")
+	reasons = models.CharField(max_length=200, default='[]')
 	def inTimeRange(self, start, stop):
 		pass #TODO
 	def __str__(self):
@@ -59,6 +70,7 @@ class Classroom(models.Model):
 		editable = False)
 	classCode = models.CharField(max_length=30, blank=True)
 	classList = models.TextField(blank=True) #JSON string
+	attendanceNotes = models.ManyToManyField(AttendanceNote)
 	@staticmethod
 	def cleanClassList(classListAsAString):
 		from django import forms
@@ -94,4 +106,3 @@ class Classroom(models.Model):
 		except Exception:
 			return None
 		return string
-	attendanceNotes = models.ManyToManyField(AttendanceNote)

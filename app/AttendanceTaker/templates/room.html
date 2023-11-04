@@ -159,9 +159,60 @@
 	<script type="text/javascript">
 		const attendanceListElement = document.getElementById("attendanceList");
 
+		function buildAttendanceList(details) {
+			const errorCodes = {
+				1: 'red',
+				2: 'orange',
+				3: 'black'	//I don't really consider this to be an error
+			};
+
+			const parent = document.createElement('div');
+
+			for (let studentName of Object.keys(details)) {
+				const name = document.createElement('span');
+				name.textContent = studentName;
+
+				const studentSusReasons = details[studentName];
+				//console.log(details, studentName, studentSusReasons);
+				if (studentSusReasons.length > 0) {	//The color becomes the first issue in the list, which should be the most important one.
+					const errorCode = studentSusReasons[0][0];	//[0] First error [0] error code
+					console.log(errorCode, studentSusReasons);
+					//console.log(errorCode);
+					name.style.setProperty("color", errorCodes[errorCode]);
+					//console.log(errorCodes, errorCode, errorCodes[errorCode]);
+					function stringifyErrors(errors){
+						str = "";
+						for(let error of errors){
+							switch(error[0]) {
+								case 1:
+									str += "This student shares the same cookie as " + error[1] + " \n";
+									break;
+								case 2:
+									str += "This student shares the ip address as " + error[1] + " \n";
+									break;
+								case 3:
+									str += "A new cookie was created for this user." + " \n";
+									break;
+								default:
+									// code block
+							}
+						}
+						return str;
+					}
+					name.title = stringifyErrors(studentSusReasons);	//This is like the alt text of text.
+				}
+
+				parent.appendChild(name);
+				parent.appendChild(document.createElement('br'));
+			}
+
+			return parent;
+		}
+
 		setInterval(()=>{
-			fetch("{% url 'ClassroomAttendanceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((attendanceList)=>{
-				attendanceListElement.textContent = attendanceList.sort().join("\n");
+			fetch("{% url 'ClassroomAttendanceDetails' %}").then((res)=>res.json()).then((data)=>data["data"]).then((attendanceList)=>{
+				attendanceListElement.innerHTML = "";
+				attendanceListElement.appendChild(buildAttendanceList(attendanceList));
 			});
 		}, 1000);
 	</script>

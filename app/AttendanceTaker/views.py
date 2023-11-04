@@ -55,6 +55,11 @@ def make_room(request):
 	return render(request, "home.html", {"form": form, "submitText": "Create Room", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
 
 #This is our homepage
+
+#Reasons
+	#[1, otherStudentName, otherId]	Cookies are the same
+	#[2, otherStudentName, otherId]	IPs are the same
+	#[3]	New cookie created
 from .forms import AttendanceForm
 def take_attendance(request, base64String):
 	# if a GET (or any other method) we'll create a blank form
@@ -88,16 +93,35 @@ def take_attendance(request, base64String):
 			# process the data in form.cleaned_data as required
 			# https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Forms
 
-			student, created = Student.objects.get_or_create(fullName=form.cleaned_data["fullName"],
-				defaults={"fullName": form.cleaned_data["fullName"]})
-
-			note = student.attend(classroom)
+			reasons = []
 
 			from ipware import get_client_ip
 			ip, is_routable = get_client_ip(request)
+
+			if request.session.get("studentCookie", None) != None:
+				print(request.session.get("studentCookie", None));
+				try:
+					otherStudent = Student.objects.get(id=request.session["studentCookie"])
+					if(otherStudent.ipAddr == ip):	#If someone with the same id has a different ip
+						reasons.append([1, otherStudent.fullName, str(otherStudent.id)])
+					if(otherStudent.fullName != form.cleaned_data["fullName"]):	#If someone with the same ID has a different name
+						reasons.append([2, otherStudent.fullName, str(otherStudent.id)])
+				except Student.DoesNotExist:
+					pass #Our bad lol
+			else:
+				reasons.append([3])
+
+			student, created = Student.objects.get_or_create(fullName=form.cleaned_data["fullName"],
+				defaults={"fullName": form.cleaned_data["fullName"]})
+
+			note = student.attend(classroom, reasons)
+
 			student.ipAddr = ip
 
 			student.save()
+
+			if request.session.get("studentCookie", None) == None:
+				request.session["studentCookie"] = str(student.id)
 
 			request.session["receipt"] = serverEncrypt(str(note).encode(), RECIEPT_SALT).decode()
 
@@ -111,7 +135,7 @@ def take_attendance(request, base64String):
 
 from django.http import HttpResponse
 def done(request):
-	return render(request, "done.html", {"receipt": request.session["receipt"], "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
+	return render(request, "done.html", {"receipt": request.session.get("receipt", "Your phone probably doesn't like cookies. No reciept for you."), "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
 
 def room(request):
 	room_code = request.session.get("room_id")
@@ -163,6 +187,36 @@ class ClassroomAttendanceList(APIView):
 			newClassroom = form.save()
 			request.session["room_id"] = str(newClassroom.id)
 
+
+from .models import Classroom
+class ClassroomAttendanceDetails(APIView):
+	def get(self, request):
+		room_code = request.session.get("room_id")
+		if room_code is None:
+			return Response([])
+
+		try:
+			obj = Classroom.objects.get(id=room_code)
+			#obj["classCode"] = classCode=form.cleaned_data["classCode"]	#Class code is the same anyways
+
+			students = {}
+
+			for attendanceNote in obj.attendanceNotes.all():
+				#print("Reasons list: ", attendanceNote.reasons);
+				import json
+				try:
+					students[attendanceNote.studentFullName] = json.loads(attendanceNote.reasons);
+				except json.JSONDecodeError:
+					return Response({"Error parsing JSON": []})
+
+			return Response(students)
+
+		except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
+			#This means we're in the clear, and we can create a new classroom.
+			newClassroom = form.save()
+			request.session["room_id"] = str(newClassroom.id)
+			return Response([])
+
 from .models import Classroom
 class ClassroomAbsenceList(APIView):
 	def get(self, request):
@@ -193,6 +247,7 @@ class ClassroomAbsenceList(APIView):
 			#This means we're in the clear, and we can create a new classroom.
 			newClassroom = form.save()
 			request.session["room_id"] = str(newClassroom.id)
+			return Response([])
 
 from .models import AttendanceNote, Student, Classroom
 from .serializers import AttendanceNoteSerializer, StudentSerializer, ClassroomSerializer
