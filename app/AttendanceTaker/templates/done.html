@@ -2,19 +2,19 @@
 
 {% block middle_content %}
 	<h1>You're all done!</h1><br/>
-	<p>Save this reciept somewhere just in case you need to prove you were in class:</p><br />
+	<p>Save this receipt somewhere just in case you need to prove you were in class:</p><br />
 	<style>
-		.reciept {
+		.receipt {
 			word-break: break-all;
 			font-family: monospace;
 		}
 	</style>
-	<div class="reciept">{{ reciept }}</div><br />
+	<div class="receipt">{{ receipt }}</div><br />
 	<script>
-		function downloadReciept(){
-			const data = "{{ reciept }}";	//This is probably bad practice, but it saves me from having to do document.onload stuff
+		function downloadReceipt(){
+			const data = "{{ receipt }}";	//This is probably bad practice, but it saves me from having to do document.onload stuff
 
-			const filename = "Reciept" + Date.now() + ".txt";
+			const filename = "Receipt" + Date.now() + ".txt";
 
 			var blob = new Blob([data], {type: 'text/json'}),
 			e = document.createEvent('MouseEvents'),
@@ -27,7 +27,7 @@
 			a.dispatchEvent(e)
 		}
 	</script>
-	<p><button type="button" onclick="downloadReciept();" style="width: fit-content;">Download</button> it, or just screenshot this page.</p>
+	<p><button type="button" onclick="downloadReceipt();" style="width: fit-content;">Download</button> it, or just screenshot this page.</p>
 {% endblock %}
 
 {% block right_content %}

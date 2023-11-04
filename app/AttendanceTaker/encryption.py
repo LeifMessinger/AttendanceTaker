@@ -23,7 +23,7 @@ def decryptAtTime(binaryString, numSecondsGood=1000000):
 	except cryptography.fernet.InvalidToken:
 		return None
 
-RECIEPT_SALT = b"reciept" #Don't ever change this. If you do, it'll nullify all of the reciepts out there.
+RECIEPT_SALT = b"receipt" #Don't ever change this. If you do, it'll nullify all of the receipts out there.
 
 #os.urandom(16) if you want a random salt
 #Redefined in AttendanceTaker/views.py

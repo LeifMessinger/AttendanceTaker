@@ -54,11 +54,11 @@ class AttendanceForm(forms.ModelForm):
 			#"classList": forms.CharField(label="JSON class list", widget=forms.Textarea, required=False)
 		}
 
-class RecieptForm(forms.Form):
-	template_name = "RecieptForm.html"
-	reciept = forms.CharField(label="Reciept", help_text="A bunch of jumbled text you got when you took attendance.", widget=forms.Textarea, required=False)
-	def clean_reciept(self):
-		data = self.cleaned_data['reciept']
+class ReceiptForm(forms.Form):
+	template_name = "ReceiptForm.html"
+	receipt = forms.CharField(label="Receipt", help_text="A bunch of jumbled text you got when you took attendance.", widget=forms.Textarea, required=False)
+	def clean_receipt(self):
+		data = self.cleaned_data['receipt']
 		#print("First character:", data[0], "Last character:", data[-1])	#Wow, django .trim()s whitespace
 		import re
 		if(not bool(re.match('^[a-zA-Z0-9_-]+$', data))):

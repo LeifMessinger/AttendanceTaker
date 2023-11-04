@@ -99,7 +99,7 @@ def take_attendance(request, base64String):
 
 			student.save()
 
-			request.session["reciept"] = serverEncrypt(str(note).encode(), RECIEPT_SALT).decode()
+			request.session["receipt"] = serverEncrypt(str(note).encode(), RECIEPT_SALT).decode()
 
 			return HttpResponseRedirect(reverse("done"))
 
@@ -111,7 +111,7 @@ def take_attendance(request, base64String):
 
 from django.http import HttpResponse
 def done(request):
-	return render(request, "done.html", {"reciept": request.session["reciept"], "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
+	return render(request, "done.html", {"receipt": request.session["receipt"], "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
 
 def room(request):
 	room_code = request.session.get("room_id")
@@ -213,21 +213,21 @@ class ClassroomViewSet(viewsets.ModelViewSet):
 def debugView(request):
 	raise Exception("Lol")
 
-#Verify a reciept
-from .forms import RecieptForm
-def verifyReciept(request):
+#Verify a receipt
+from .forms import ReceiptForm
+def verifyReceipt(request):
 	# if this is a POST request we need to process the form data
 	if request.method == "POST":
 		# create a form instance and populate it with data from the request:
-		form = RecieptForm(request.POST)
+		form = ReceiptForm(request.POST)
 		# check whether it's valid:
 		if form.is_valid():	#Cleans the data too...? SQL Sanitization
-			decrypted = serverDecrypt((form.cleaned_data["reciept"]).encode(), RECIEPT_SALT);
+			decrypted = serverDecrypt((form.cleaned_data["receipt"]).encode(), RECIEPT_SALT);
 			if(decrypted is None):
-				return HttpResponse("It failed to decrypt the reciept. It's probably not geniuine, but maybe if you try it again you'll have better luck.");
+				return HttpResponse("It failed to decrypt the receipt. It's probably not geniuine, but maybe if you try it again you'll have better luck.");
 			return HttpResponse(decrypted.decode());
 		else:	#The form isn't valid. Probably shouldn't get here.
-			return render(request, "VerifyReciept.html", {"form": form, "submitText": "Take Attendance", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})	#The form has a form.errors which will show on reload
+			return render(request, "VerifyReceipt.html", {"form": form, "submitText": "Take Attendance", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})	#The form has a form.errors which will show on reload
 	else:
-		form = RecieptForm()
-		return render(request, "VerifyReciept.html", {"form": form, "submitText": "Verify Reciept", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
+		form = ReceiptForm()
+		return render(request, "VerifyReceipt.html", {"form": form, "submitText": "Verify Receipt", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
