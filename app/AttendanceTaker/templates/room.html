@@ -59,8 +59,8 @@
 		}
 		function copyJSONAbsenceList(){
 			fetch("{% url 'ClassroomAbsenceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((absenceList)=>{
-				console.log(attendanceList);
-				copyString(JSON.stringify(attendanceList));
+				console.log(absenceList);
+				copyString(JSON.stringify(absenceList));
 			});
 		}
 		function buildAbsenceList(absenceList) {
