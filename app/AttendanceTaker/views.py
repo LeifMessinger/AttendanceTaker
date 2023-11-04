@@ -101,10 +101,14 @@ def take_attendance(request, base64String):
 			if request.session.get("studentCookie", None) != None:
 				print(request.session.get("studentCookie", None));
 				try:
-					otherStudent = Student.objects.get(id=request.session["studentCookie"])
-					if(otherStudent.ipAddr == ip):	#If someone with the same id has a different ip
+					#For each student that has the same cookie, but not the same name.
+					for otherStudent in Student.objects.all().filter(id=request.session["studentCookie"]).exclude(fullName=form.cleaned_data["fullName"]):
 						reasons.append([1, otherStudent.fullName, str(otherStudent.id)])
-					if(otherStudent.fullName != form.cleaned_data["fullName"]):	#If someone with the same ID has a different name
+				except Student.DoesNotExist:
+					pass #Our bad lol
+				try:
+					#For each student that has the same ip address but not the same name
+					for otherStudent in Student.objects.all().filter(ipAddr=ip).exclude(fullName=form.cleaned_data["fullName"]):
 						reasons.append([2, otherStudent.fullName, str(otherStudent.id)])
 				except Student.DoesNotExist:
 					pass #Our bad lol
