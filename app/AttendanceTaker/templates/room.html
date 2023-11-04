@@ -14,17 +14,74 @@
 	</style>
 
 	<h2>Absent:</h2>
-	<p id="absenceList"></p>
+	<div id="absenceList"></div>
+	<button onclick="copyJSONAbsenceList()">Copy JSON</button>
 
 	{% load static %}
 	<script src="{% static 'AttendanceTaker/qrcodejs/qrcode.min.js' %}" type="text/javascript"></script>
 	<script type="text/javascript">
 		const absenceListElement = document.getElementById("absenceList");
 
+		function copyString(text){
+			//Could be refactored a little bit for repetition
+			if(!(document.execCommand)){
+				console.warn("They finally deprecated document.execCommand!");
+			}
+			if(document.location.protocol == "https:"){
+				navigator.clipboard.writeText(text).catch(()=>{
+					const input = document.createElement('textarea');
+					input.value = text;
+					document.body.appendChild(input);
+					input.select();
+					const success = document.execCommand('copy');
+					document.body.removeChild(input);
+
+					if(!success){
+						prompt("Copy failed. Might have ... somewhere. Check console.", text);
+					}else{
+						alert("Copied to clipboard");
+					}
+				});
+			}else{
+				const input = document.createElement('textarea');
+				input.value = text;
+				document.body.appendChild(input);
+				input.select();
+				const success = document.execCommand('copy');
+				document.body.removeChild(input);
+
+				if(!success){
+					prompt("Copy failed. Might have ... somewhere. Check console.", text);
+				}else{
+					alert("Copied to clipboard");
+				}
+			}
+		}
+		function copyJSONAbsenceList(){
+			fetch("{% url 'ClassroomAbsenceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((absenceList)=>{
+				console.log(attendanceList);
+				copyString(JSON.stringify(attendanceList));
+			});
+		}
+		function buildAbsenceList(absenceList) {
+			const parent = document.createElement('div');
+
+			for (let studentName of absenceList) {
+				const name = document.createElement('span');
+                                name.textContent = studentName;
+
+				parent.appendChild(name);
+                                parent.appendChild(document.createElement('br'));
+			}
+
+			return parent;
+		}
+
 		setInterval(()=>{
 			fetch("{% url 'ClassroomAbsenceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((absenceList)=>{
 				//console.log(absenceList);
-				absenceListElement.textContent = absenceList.sort().join("\n");
+				absenceListElement.innerHTML = "";
+				absenceListElement.appendChild(buildAbsenceList(absenceList));
 			});
 		}, 1000);
 	</script>
