@@ -79,7 +79,7 @@ class Classroom(models.Model):
 					if len(array) < 3:	#We assume that people want to have more names than 3 people
 						return None
 					return array
-				array = trySplitString(classListAsAString, ", ") or trySplitString(classListAsAString, ",") or trySplitString(classListAsAString, "\t") or trySplitString(classListAsAString, "\r\n") or trySplitString(classListAsAString, "\n")
+				array = trySplitString(classListAsAString, "\t") or trySplitString(classListAsAString, "\r\n") or trySplitString(classListAsAString, "\n") or trySplitString(classListAsAString, ", ") or trySplitString(classListAsAString, ",")
 				if array is None:
 					raise forms.ValidationError("The JSON data was invalid, the comma/tab/newline separated list is invalid or has less than 3 students.")
 				return array
