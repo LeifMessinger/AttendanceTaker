@@ -61,7 +61,7 @@ class AttendanceNote(models.Model):
 	def inTimeRange(self, start, stop):
 		pass #TODO
 	def __str__(self):
-		return 'Student {} attended class at {} in classroom '.format(self.studentFullName, self.takenTime, self.classroomId.classCode)
+		return 'Student {} attended class at {} in classroom {}'.format(self.studentFullName, self.takenTime, self.classroomId.classCode)
 
 class Classroom(models.Model):
 	id = models.UUIDField(
