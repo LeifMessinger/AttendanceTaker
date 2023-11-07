@@ -214,9 +214,9 @@
 			});
 		}
 		function copyCSVList(){
-			fetch("{% url 'ClassroomAttendanceList' %}").then((res) => res.text()).then((data)=>data["data"]).then((attendanceList) => {
+			fetch("{% url 'ClassroomAttendanceList' %}").then((res) => res.json()).then((data)=>data["data"]).then((attendanceList) => {
 				console.log(attendanceList);
-				attendance=attendanceList.join(','); 
+				let attendance=attendanceList.join(','); 
 				copyString(attendance.trim());});
 		}
 	</script>
