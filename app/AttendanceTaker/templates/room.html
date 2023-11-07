@@ -222,6 +222,21 @@
             			copyString(csvData);
         		});//NOT YET IMPLEMENTED
 		}
+		function convertToCSV(attendanceList) {
+		    const csvRows = [];
+
+		    // Create the header row with column names
+		    const header = Object.keys(attendanceList[0]);
+		    csvRows.push(header.join(','));
+
+		    // Create data rows
+		    attendanceList.forEach((record) => {
+	        	const values = header.map((fieldName) => record[fieldName]);
+		        csvRows.push(values.join(','));
+		    });
+
+		    return csvRows.join('\n');
+		}
 	</script>
 
 	<h2><div id="presentNumber" style="display: inline;"></div> Present:</h2>
