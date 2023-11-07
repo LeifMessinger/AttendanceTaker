@@ -214,28 +214,8 @@
 			});
 		}
 		function copyCSVList(){
-			fetch("{% url 'ClassroomAttendanceList' %}")
-        			.then((res) => res.json())
-        			.then((data) => data["data"])
-        			.then((attendanceList) => {
-            			const csvData = convertToCSV(attendanceList);
-            			copyString(csvData);
-        		});//NOT YET IMPLEMENTED
-		}
-		function convertToCSV(attendanceList) {
-		    const csvRows = [];
-
-		    // Create the header row with column names
-		    const header = Object.keys(attendanceList[0]);
-		    csvRows.push(header.join(','));
-
-		    // Create data rows
-		    attendanceList.forEach((record) => {
-	        	const values = header.map((fieldName) => record[fieldName]);
-		        csvRows.push(values.join(','));
-		    });
-
-		    return csvRows.join('\n');
+			const attendencelist=attendanceList.join(',');
+			console.log(attendencelist);//NOT YET IMPLEMENTED
 		}
 	</script>
 
