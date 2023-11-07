@@ -216,7 +216,7 @@
 		function copyCSVList(){
 			fetch("{% url 'ClassroomAttendanceList' %}").then((res) => res.text()).then((data)=>data["data"]).then((attendanceList) => {
 				console.log(attendanceList); 
-				copyString(attendanceList.trim());});
+				copyString(attendanceList);});
 		}
 	</script>
 
