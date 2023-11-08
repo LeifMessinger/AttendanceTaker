@@ -70,6 +70,12 @@
 				copyString(JSON.stringify(absenceList));
 			});
 		}
+		function copyCSVAbsenceList(){
+			fetch("{% url 'ClassroomAbsenceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((absenceList)=>{
+				console.log(absenceList);
+				copyString(absenceList.join(","));
+			});
+		}
 		function buildAbsenceList(absenceList) {
 			const parent = document.createElement('div');
 
