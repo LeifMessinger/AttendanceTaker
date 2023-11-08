@@ -42,44 +42,47 @@
       }
     }
   }
-  
   function copyString(text){
-    //Could be refactored a little bit for repetition
-    if(!(document.execCommand)){
-      console.warn("They finally deprecated document.execCommand!");
-    }
-    if(document.location.protocol == "https:"){
-      navigator.clipboard.writeText(text).then(()=>{
-        alert("Copied string to clipboard.");
-      }).catch(()=>{
-        const input = document.createElement('textarea');
-        input.value = text;
-        document.body.appendChild(input);
-        input.select();
-        const success = document.execCommand('copy');
-        document.body.removeChild(input);
-        
-        if(!success){
-          prompt("Copy failed. Might have ... somewhere. Check console.", text);
-        }else{
-          alert("Copied string to clipboard.");
-        }
-      });
-    }else{
-      const input = document.createElement('textarea');
-      input.value = text;
-      document.body.appendChild(input);
-      input.select();
-      const success = document.execCommand('copy');
-      document.body.removeChild(input);
-      
-      if(!success){
-        prompt("Copy failed. Might have ... somewhere. Check console.", text);
-      }else{
-        alert("Copied string to clipboard.");
-      }
-    }
-  }
+	async function navigatorClipboardCopy(text){
+			if(document.location.protocol != "https:"){
+					return false;
+			}
+			return new Promise((resolve, reject)=>{
+					navigator.clipboard.writeText(text).then(()=>{resolve(true);}, ()=>{resolve(false);});
+			});
+	}
+	function domCopy(text){
+			if(!(document.execCommand)){
+					console.warn("They finally deprecated document.execCommand!");
+			}
+
+			const input = document.createElement('textarea');
+			input.value = text;
+			document.body.appendChild(input);
+			input.select();
+			const success = document.execCommand('copy');
+			document.body.removeChild(input);
+
+			return success;
+	}
+	function promptCopy(){
+			prompt("Copy failed. Might have ... somewhere. Check console.", text);
+	}
+	function done(){
+			alert("Copied to clipboard");
+	}
+	navigatorClipboardCopy(text).catch(()=>{return false;}).then((success)=>{
+			if(success){
+					done();
+			}else{
+					if(domCopy(text)){
+							done();
+					}else{
+							promptCopy();
+					}
+			}
+	});
+}
   
   // Step 3: Prompt the teacher with the final list
   const result = JSON.stringify(studentList);
