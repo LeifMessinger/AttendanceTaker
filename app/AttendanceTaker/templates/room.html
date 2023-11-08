@@ -278,6 +278,9 @@
 			fetch("{% url 'ClassroomAttendanceDetails' %}").then((res)=>res.json()).then((data)=>data["data"]).then((attendanceList)=>{
 				attendanceListElement.innerHTML = "";
 				attendanceListElement.appendChild(buildAttendanceList(attendanceList));
+                                let Headcount=attendanceList.length;
+				let Element = document.getElementById("attendanceList");
+                                Element.textContent = string("attendanceList");				
 			});
 		}, 1000);
 	</script>
