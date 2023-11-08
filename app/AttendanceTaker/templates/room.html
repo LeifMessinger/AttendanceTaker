@@ -186,19 +186,24 @@
 			});
 		}
 		function copyCSVList(){
-			//NOT YET IMPLEMENTED
+			fetch("{% url 'ClassroomAttendanceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((attendanceList)=>{
+				console.log(attendanceList);
+				copyString(attendanceList.join(","));
+			});
 		}
 	</script>
 
-	<h2><div id="presentNumber" style="display: inline;"></div> Present:</h2>
+	<h2>Present:</h2>
+	<span>Head count: </span><div id="presentNumber" style="display: inline;"></div>
 	<p id="attendanceList"></p>
-	<!--<button onclick="copyCSVList()">Copy CSV</button> Uncomment this to test your button-->
+	<button onclick="copyCSVList()">Copy CSV</button>
 	<button onclick="copyJSONList()">Copy JSON</button>
 
 	{% load static %}
 	<script src="{% static 'AttendanceTaker/qrcodejs/qrcode.min.js' %}" type="text/javascript"></script>
 	<script type="text/javascript">
 		const attendanceListElement = document.getElementById("attendanceList");
+		const presentNumberElement = document.getElementById("presentNumber");
 
 		function buildAttendanceList(details) {
 			const errorCodes = {
@@ -250,6 +255,7 @@
 			fetch("{% url 'ClassroomAttendanceDetails' %}").then((res)=>res.json()).then((data)=>data["data"]).then((attendanceList)=>{
 				attendanceListElement.innerHTML = "";
 				attendanceListElement.appendChild(buildAttendanceList(attendanceList));
+				presentNumberElement.textContent = Object.keys(attendanceList).length;
 			});
 		}, 1000);
 	</script>
