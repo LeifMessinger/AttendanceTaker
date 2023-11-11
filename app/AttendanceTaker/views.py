@@ -65,9 +65,6 @@ def take_attendance(request, base64String):
 	# if a GET (or any other method) we'll create a blank form
 	form = AttendanceForm(request.POST or None)
 
-	#Check that the link is still good
-	#Theoretically, if someone could send a POST request, they'd have a ten minute window
-	#But if they could write a custom post request in 10 minutes, they deserve to get counted for attendance.
 	NUM_SECONDS_GOOD = 600 #10 minutes
 	decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
 	if(decodedString is None):
@@ -88,6 +85,14 @@ def take_attendance(request, base64String):
 
 	# if this is a POST request we need to process the form data
 	if request.method == "POST":
+		#Check that the link is still good
+		#Theoretically, if someone could send a POST request, they'd have a ten minute window
+		#But if they could write a custom post request in 10 minutes, they deserve to get counted for attendance.
+		NUM_SECONDS_GOOD = 600 #10 minutes
+		decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
+		if(decodedString is None):
+			return HttpResponseForbidden("You took too long to fill out the form. Does it really take you 10 minutes to type your name? Try again.")
+
 		# check whether it's valid:
 		if form.is_valid():	#Cleans the data too...? SQL Sanitization
 			# process the data in form.cleaned_data as required
@@ -135,6 +140,13 @@ def take_attendance(request, base64String):
 			#Rerender
 			return render(request, "TakeAttendance.html", {"form": form, "submitText": "Take Attendance", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})	#The form has a form.errors which will show on reload
 	else:
+		#Check that the link is still good
+		#Theoretically, if someone could send a POST request, they'd have a ten minute window
+		#But if they could write a custom post request in 10 minutes, they deserve to get counted for attendance.
+		NUM_SECONDS_GOOD = 5 #5 seconds
+		decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
+		if(decodedString is None):
+			return HttpResponseForbidden("Took too long to scan the QR code. Try again")
 		return render(request, "TakeAttendance.html", {"form": form, "submitText": "Take Attendance", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
 
 from django.http import HttpResponse
