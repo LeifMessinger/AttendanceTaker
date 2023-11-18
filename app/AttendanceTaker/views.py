@@ -245,11 +245,11 @@ class ClassroomAbsenceList(APIView):
 			#obj["classCode"] = classCode=form.cleaned_data["classCode"]	#Class code is the same anyways
 
 			if obj.classList == "":
-				return Response(["To use the absence list", "you need to input the JSON class list."])
+				return Response([])
 
 			absenceList = obj.getClassList()
 			if absenceList is None:
-				return Response(["Server error", absenceList, absenceList.__class__.__name__])
+				return Response(["Server error"]) #Shouldn't get here
 
 			for attendanceNote in obj.attendanceNotes.all():
 				studentFullName = attendanceNote.studentFullName

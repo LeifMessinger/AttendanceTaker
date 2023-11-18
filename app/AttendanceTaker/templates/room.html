@@ -95,7 +95,11 @@
 			fetch("{% url 'ClassroomAbsenceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((absenceList)=>{
 				//console.log(absenceList);
 				absenceListElement.innerHTML = "";
-				absenceListElement.appendChild(buildAbsenceList(absenceList));
+				if(absenceList.length == 0){
+					absenceListElement.appendChild(buildAbsenceList(["To use the absence list, you need to input the JSON class list."]));
+				}else{
+					absenceListElement.appendChild(buildAbsenceList(absenceList));
+				}
 			});
 		}, 1000);
 	</script>
