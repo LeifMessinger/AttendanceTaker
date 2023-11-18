@@ -4,3 +4,6 @@
 [submodule "app/AttendanceTaker/static/AttendanceTaker/qrcodejs"]
 	path = app/AttendanceTaker/static/AttendanceTaker/qrcodejs
 	url = git@github.com:davidshimjs/qrcodejs.git
+[submodule "app/AttendanceTaker/static/AttendanceTaker/excellentexport"]
+	path = app/AttendanceTaker/static/AttendanceTaker/excellentexport
+	url = https://github.com/jmaister/excellentexport.git

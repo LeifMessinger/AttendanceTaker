@@ -185,6 +185,7 @@
 		}
 	</style>
 
+	<script src="{% static 'AttendanceTaker/excellentexport/dist/excellentexport.js' %}" type="text/javascript"></script>
 	<script>
 		function copyJSONList(){
 			fetch("{% url 'ClassroomAttendanceList' %}").then((res)=>res.json()).then((data)=>data["data"]).then((attendanceList)=>{
@@ -198,6 +199,40 @@
 				copyString(attendanceList.join(","));
 			});
 		}
+		async function getExcelSheet(){
+			const attendance = [];
+			const attendanceList = await fetch("{% url 'ClassroomAttendanceList' %}").then((res)=>res.json()).then((data)=>data["data"]);
+			const absenceList = await fetch("{% url 'ClassroomAbsenceList' %}").then((res)=>res.json()).then((data)=>data["data"]);
+
+			//Add all the absent people
+			absenceList.forEach((person)=>{
+				attendance.push([person , 0]);
+			});
+			//Add all the present people
+			attendanceList.forEach((person)=>{
+				attendance.push([person , 1]);
+			});
+
+			console.log(attendance);
+			attendance.sort((a, b)=>{return a[0].localeCompare(b[0])});
+			console.log(attendance);
+
+			function newApiArray(format, data) {
+				const sheetName = ('Attendance' + Date.now());
+				return ExcellentExport.convert({
+					filename: sheetName,
+					format: format,
+					openAsDownload: true
+				}, [{
+					name: sheetName,
+					from: {
+						array: data
+					}
+				}]);
+			}
+
+			return newApiArray("xlsx", attendance);
+		}
 	</script>
 
 	<h2>Present:</h2>
@@ -205,6 +240,7 @@
 	<p id="attendanceList"></p>
 	<button onclick="copyCSVList()">Copy CSV</button>
 	<button onclick="copyJSONList()">Copy JSON</button>
+	<button onclick="getExcelSheet()">Download Excel</button>
 
 	{% load static %}
 	<script src="{% static 'AttendanceTaker/qrcodejs/qrcode.min.js' %}" type="text/javascript"></script>
