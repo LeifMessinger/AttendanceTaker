@@ -43,7 +43,7 @@ class AttendanceForm(forms.ModelForm):
 	thisIsMe = forms.BooleanField(label="That is me", required=True)
 
 	def classListOnly(self, classListOnly, choices):
-		print(classListOnly, choices)
+		#print(classListOnly, choices)
 		if classListOnly:
 			choices = [(item, item) for item in choices]
 			self.fields["fullName"].widget = forms.ChoiceField(choices=choices).widget;
@@ -75,7 +75,7 @@ class ReceiptForm(forms.Form):
 		data = self.cleaned_data['receipt']
 		#print("First character:", data[0], "Last character:", data[-1])	#Wow, django .trim()s whitespace
 		import re
-		if(not bool(re.match('^[a-zA-Z0-9_-]+$', data))):
+		if(not bool(re.match('^([\\w=_-])+$', data))):
 			raise forms.ValidationError("The pasted text wasn't a url safe base64 string. Try again.")
 		else:
 			return data

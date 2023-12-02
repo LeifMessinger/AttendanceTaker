@@ -61,7 +61,13 @@ class AttendanceNote(models.Model):
 	def inTimeRange(self, start, stop):
 		pass #TODO
 	def __str__(self):
-		return 'Student {} attended class at {} in classroom {}'.format(self.studentFullName, self.takenTime, self.classroomId.classCode)
+		if (self.classroomId.classCode == None) or (self.classroomId.classCode == ""):
+			return 'Student {} attended class at {} in classroom without a class code'.format(self.studentFullName, self.takenTime)
+		if type(self.classroomId.classCode) != type(""):
+			return 'Student {} attended class at {} and the class code isn\'t a string!?'.format(self.studentFullName, self.takenTime)
+		if len(self.classroomId.classCode) <= 5:
+			return 'Student {} attended class at {} in classroom with a class code that is too short to display.'.format(self.studentFullName, self.takenTime)
+		return 'Student {} attended class at {} in classroom starting with "{}"'.format(self.studentFullName, self.takenTime, self.classroomId.classCode[0:5])
 
 class Classroom(models.Model):
 	id = models.UUIDField(

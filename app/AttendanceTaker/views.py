@@ -136,6 +136,7 @@ def take_attendance(request, base64String):
 			if request.session.get("studentCookie", None) == None:
 				request.session["studentCookie"] = str(student.id)
 
+			#request.session["receipt"] = serverDecrypt(serverEncrypt(str(note).encode(), RECIEPT_SALT).decode(), RECIEPT_SALT).decode()
 			request.session["receipt"] = serverEncrypt(str(note).encode(), RECIEPT_SALT).decode()
 
 			return HttpResponseRedirect(reverse("done"))
@@ -297,12 +298,12 @@ def verifyReceipt(request):
 		form = ReceiptForm(request.POST)
 		# check whether it's valid:
 		if form.is_valid():	#Cleans the data too...? SQL Sanitization
-			decrypted = serverDecrypt((form.cleaned_data["receipt"]).encode(), RECIEPT_SALT);
+			decrypted = serverDecrypt((form.cleaned_data["receipt"]).strip().encode(), RECIEPT_SALT);
 			if(decrypted is None):
 				return HttpResponse("It failed to decrypt the receipt. It's probably not geniuine, but maybe if you try it again you'll have better luck.");
 			return HttpResponse(decrypted.decode());
 		else:	#The form isn't valid. Probably shouldn't get here.
-			return render(request, "VerifyReceipt.html", {"form": form, "submitText": "Take Attendance", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})	#The form has a form.errors which will show on reload
+			return render(request, "VerifyReceipt.html", {"form": form, "submitText": "Verify Reciept", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})	#The form has a form.errors which will show on reload
 	else:
 		form = ReceiptForm()
 		return render(request, "VerifyReceipt.html", {"form": form, "submitText": "Verify Receipt", "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
