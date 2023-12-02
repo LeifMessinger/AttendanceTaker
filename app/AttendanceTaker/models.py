@@ -70,6 +70,7 @@ class Classroom(models.Model):
 		editable = False)
 	classCode = models.CharField(max_length=30, blank=True)
 	classList = models.TextField(blank=True) #JSON string
+	classListOnly = models.BooleanField(default=False)
 	attendanceNotes = models.ManyToManyField(AttendanceNote)
 	@staticmethod
 	def cleanClassList(classListAsAString):

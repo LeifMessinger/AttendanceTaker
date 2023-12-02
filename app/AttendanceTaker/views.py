@@ -62,8 +62,6 @@ def make_room(request):
 	#[3]	New cookie created
 from .forms import AttendanceForm
 def take_attendance(request, base64String):
-	# if a GET (or any other method) we'll create a blank form
-	form = AttendanceForm(request.POST or None)
 
 	NUM_SECONDS_GOOD = 600 #10 minutes
 	decodedString = decryptAtTime(base64String, NUM_SECONDS_GOOD)
@@ -79,9 +77,15 @@ def take_attendance(request, base64String):
 		from django.http import HttpResponseNotFound
 		return HttpResponseNotFound("We couldn't find the classroom in our database.")
 
+	# if a GET (or any other method) we'll create a blank form
 	import json
-	if classroom.classList:
-		form.fields['fullName'].options = classroom.getClassList()
+	classList = []
+	try:
+		classList = classroom.getClassList()
+	except ValueError:
+		pass	#pray
+
+	form = AttendanceForm(request.POST or None, classListOnly=classroom.classListOnly, classList=classList);
 
 	# if this is a POST request we need to process the form data
 	if request.method == "POST":

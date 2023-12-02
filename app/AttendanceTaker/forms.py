@@ -20,6 +20,7 @@ class MakeRoomForm(forms.ModelForm):
 	classList.widget.attrs.update({
 		'placeholder': 'optional\n\n["Json", "string", "array"]\n\nComma,Separated,Values  or  Tab\tSeparated\tValues\n\nNewline\nSeparated\nValues'
 	})
+	classListOnly = forms.BooleanField(label="Only allow names in the class list", required=False)
 
 	def clean_classList(self):
 		data = self.cleaned_data['classList']
@@ -30,7 +31,7 @@ class MakeRoomForm(forms.ModelForm):
 
 	class Meta:
 		model = Classroom
-		fields = ["classCode", "classList"]
+		fields = ["classCode", "classList", "classListOnly"]
 		widgets = {
 			#"classCode": forms.CharField(label="Class code", max_length=30, required=False),
 			#"classList": forms.CharField(label="JSON class list", widget=forms.Textarea, required=False)
@@ -38,13 +39,26 @@ class MakeRoomForm(forms.ModelForm):
 
 class AttendanceForm(forms.ModelForm):
 	template_name = "TakeAttendanceForm.html"
-	fullName = forms.CharField(label="Full name", max_length=100, required=True)
-	fullName.widget.attrs.update({
-		'autoComplete': 'on',
-		'list': 'fullNameOptions',
-		'placeholder': 'First Last'
-	})
+	#fullName = forms.CharField(label="Full name", max_length=100, required=True)
 	thisIsMe = forms.BooleanField(label="That is me", required=True)
+
+	def classListOnly(self, classListOnly, choices):
+		print(classListOnly, choices)
+		if classListOnly:
+			choices = [(item, item) for item in choices]
+			self.fields["fullName"].widget = forms.ChoiceField(choices=choices).widget;
+		else:
+			self.fields['fullName'] = forms.CharField(label="Full name", max_length=100, required=True)
+			self.fields['fullName'].widget.attrs.update({
+				'autoComplete': 'on',
+				'list': 'fullNameOptions',
+				'placeholder': 'First Last'
+			})
+			self.fields['fullName'].options = choices
+
+	def __init__(self, *args, classListOnly=False, classList=[], **kwargs):
+		super(AttendanceForm, self).__init__(*args, **kwargs)
+		self.classListOnly(classListOnly, classList)
 
 	class Meta:
 		model = Student
