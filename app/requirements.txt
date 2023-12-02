@@ -3,6 +3,6 @@ djangorestframework==3.14.0
 djangorestframework-jsonapi==6.1.0
 django-filter==23.3
 environs==7.3.1
-cryptography==41.0.4
+cryptography==41.0.6
 django-ipware==5.0.1
 whitenoise==6.6.0
