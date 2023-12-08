@@ -1,19 +1,36 @@
-x{% extends "layout.html" %}
+<label for="{{ form.field_id }}">{{ form.field_label }}</label>
+{{ form.field }}
+<head>
+    <title>Your Page Title</title>
+    <!-- Other head elements -->
+</head>
+<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Your Page Title</title>
+    <!-- Other head elements -->
+</head>
+<body>
+    {% extends "layout.html" %}
 
-{% block middle_content %}
-	<form action="" method="post"> <!-- Posts to the same url as the home page -->
-		{% csrf_token %}
-		{{ form }}
-		<button type="submit">{{ submitText }}</button>
-	</form>
-{% endblock %}
+    {% block middle_content %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <label for="{{ form.field_id }}">{{ form.field_label }}</label>
+            {{ form.field }}
+            <button type="submit">{{ submitText }}</button>
+        </form>
+    {% endblock %}
 
-{% block right_content %}
-	<p>Attendance Taker {{ attendanceTakerVersion }}</p><br />
-	<a href="{% url 'verifyReceipt' %}">Receipt Verifier</a><br />
-	<br />
-	Bookmarklets:<br />
-	<a href="javascript:(function()%7B(async%20function()%7B%0A%20%20let%20scrollIntervalId%20%3D%20setInterval(function()%7B%0A%20%20%20%20%20window.scrollBy(0%2C%2010000)%0A%20%20%7D%2C%201000)%3B%0A%0A%20%20%2F%2FThis%20isn't%20reliable%2C%20because%20the%20loading%20sign%20only%20shows%20when%20it's%20fetching%20more%20results.%0A%20%20function%20isLoading()%7B%0A%20%20%20%20return%20(document.querySelector(%22.paginatedLoadingIndicator%22).style.getPropertyValue(%22display%22)%20!%3D%20%22none%22)%3B%0A%20%20%7D%0A%0A%20%20%2F%2FSo%20we'll%20just%20wait%2010%20seconds%0A%20%20async%20function%20wait(ms%2C%20retVal)%7B%0A%20%20%20%20%20%20return%20new%20Promise((resolve%2C%20reject)%3D%3E%7B%0A%20%20%20%20%20%20%20%20%20%20setTimeout(resolve%2C%20ms%2C%20retVal)%3B%0A%20%20%20%20%20%20%7D)%3B%0A%20%20%7D%0A%0A%20%20await%20wait(10000)%3B%0A%0A%20%20clearTimeout(scrollIntervalId)%3B%0A%20%20%0A%20%20const%20users%20%3D%20Array.from(document.querySelectorAll(%22.rosterUser%22)).map((person)%3D%3E%7B%0A%20%20%20%20return%20%7B%22name%22%3A%20person.querySelector(%22.roster_user_name%22).textContent.trim()%2C%0A%20%20%20%20%20%20%22role%22%3A%20person.children%5B3%5D.textContent.trim()%0A%20%20%20%20%7D%3B%0A%20%20%7D)%3B%0A%20%20%0A%20%20%2F%2F%20Step%201%3A%20Filter%20names%20where%20role%20is%20%22Student%22%20and%20remove%20pronouns%0A%20%20const%20studentList%20%3D%20users%0A%20%20%20%20.filter(user%20%3D%3E%20user.role%20%3D%3D%3D%20%22Student%22)%0A%20%20%20%20.map(user%20%3D%3E%20user.name.replace(%2F(%5C(.%2B%5C))%2Fg%2C%20%22%22).trim())%3B%0A%20%20%0A%20%20%2F%2F%20Step%202%3A%20Identify%20and%20handle%20duplicates%0A%20%20const%20duplicates%20%3D%20%5B%5D%3B%0A%20%20for%20(let%20i%20%3D%200%3B%20i%20%3C%20studentList.length%3B%20i%2B%2B)%20%7B%0A%20%20%20%20for%20(let%20j%20%3D%20i%20%2B%201%3B%20j%20%3C%20studentList.length%3B%20j%2B%2B)%20%7B%0A%20%20%20%20%20%20if%20(studentList%5Bi%5D%20%3D%3D%3D%20studentList%5Bj%5D)%20%7B%0A%20%20%20%20%20%20%20%20duplicates.push(studentList%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20studentList.splice(j%2C%201)%3B%0A%20%20%20%20%20%20%20%20debugger%0A%20%20%20%20%20%20%20%20j--%3B%20%2F%2F%20Adjust%20the%20index%20because%20of%20the%20splice%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%7D%0A%20%20%0A%20%20function%20copyString(text)%7B%0A%20%20%20%20%2F%2FCould%20be%20refactored%20a%20little%20bit%20for%20repetition%0A%20%20%20%20if(!(document.execCommand))%7B%0A%20%20%20%20%20%20console.warn(%22They%20finally%20deprecated%20document.execCommand!%22)%3B%0A%20%20%20%20%7D%0A%20%20%20%20if(document.location.protocol%20%3D%3D%20%22https%3A%22)%7B%0A%20%20%20%20%20%20navigator.clipboard.writeText(text).then(()%3D%3E%7B%0A%20%20%20%20%20%20%20%20alert(%22Copied%20string%20to%20clipboard.%22)%3B%0A%20%20%20%20%20%20%7D).catch(()%3D%3E%7B%0A%20%20%20%20%20%20%20%20const%20input%20%3D%20document.createElement('textarea')%3B%0A%20%20%20%20%20%20%20%20input.value%20%3D%20text%3B%0A%20%20%20%20%20%20%20%20document.body.appendChild(input)%3B%0A%20%20%20%20%20%20%20%20input.select()%3B%0A%20%20%20%20%20%20%20%20const%20success%20%3D%20document.execCommand('copy')%3B%0A%20%20%20%20%20%20%20%20document.body.removeChild(input)%3B%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20if(!success)%7B%0A%20%20%20%20%20%20%20%20%20%20prompt(%22Copy%20failed.%20Might%20have%20...%20somewhere.%20Check%20console.%22%2C%20text)%3B%0A%20%20%20%20%20%20%20%20%7Delse%7B%0A%20%20%20%20%20%20%20%20%20%20alert(%22Copied%20string%20to%20clipboard.%22)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%7D)%3B%0A%20%20%20%20%7Delse%7B%0A%20%20%20%20%20%20const%20input%20%3D%20document.createElement('textarea')%3B%0A%20%20%20%20%20%20input.value%20%3D%20text%3B%0A%20%20%20%20%20%20document.body.appendChild(input)%3B%0A%20%20%20%20%20%20input.select()%3B%0A%20%20%20%20%20%20const%20success%20%3D%20document.execCommand('copy')%3B%0A%20%20%20%20%20%20document.body.removeChild(input)%3B%0A%20%20%20%20%20%20%0A%20%20%20%20%20%20if(!success)%7B%0A%20%20%20%20%20%20%20%20prompt(%22Copy%20failed.%20Might%20have%20...%20somewhere.%20Check%20console.%22%2C%20text)%3B%0A%20%20%20%20%20%20%7Delse%7B%0A%20%20%20%20%20%20%20%20alert(%22Copied%20string%20to%20clipboard.%22)%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%7D%0A%20%20%0A%20%20%2F%2F%20Step%203%3A%20Prompt%20the%20teacher%20with%20the%20final%20list%0A%20%20const%20result%20%3D%20JSON.stringify(studentList)%3B%0A%20%20%0A%20%20if%20(duplicates.length%20%3E%200)%20%7B%0A%20%20%20%20alert(%22Duplicates%20found%3A%20%22%20%2B%20JSON.stringify(duplicates))%3B%0A%20%20%7D%20else%20%7B%0A%20%20%20%20copyString(result)%3B%0A%20%20%7D%0A%20%20%0A%20%20console.log(result)%3B%0A%7D)()%3B%7D)()%3B">CanvasClassList</a><br />
-	<p>It scrolls for you. Give it 10 seconds.</p><br />
-	<u class="formError">GradeClassList</u><br />
-{% endblock %}
+    {% block right_content %}
+        <p>Attendance Taker {{ attendanceTakerVersion }}</p><br />
+        <a href="{% url 'verifyReceipt' %}">Receipt Verifier</a><br />
+        <br />
+        Bookmarklets:<br />
+        <a href="javascript:(function()%7B(async%20function()%7B%0A%20%20// ... (your existing JavaScript code) ... %0A%7D)()%3B%7D)()%3B">CanvasClassList</a><br />
+        <p>It scrolls for you. Give it 10 seconds.</p><br />
+        <u class="formError">GradeClassList</u><br />
+    {% endblock %}
+</body>
+</html>
