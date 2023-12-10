@@ -36,7 +36,7 @@
 {% block content %}
 
 <div row grow>
-	<div id="leftPadding" shrink style="padding-left: 1vw; padding-top: 1vh;">
+	<div id="leftPadding" column shrink style="padding-left: 1vw; padding-top: 1vh;">
 		{% block left_content %}
 		{% endblock %}
 	</div>
@@ -48,7 +48,7 @@
 		</div>
 		<div grow shrink style="flex-basis: 20%; background: var(--subtleBackground);"></div>
 	</div>
-	<div id="rightPadding" shrink style="text-align: right; padding-right: 1vw; padding-top: 1vh;">
+	<div id="rightPadding" column shrink style="text-align: right; padding-right: 1vw; padding-top: 1vh;">
 		{% block right_content %}
 		{% endblock %}
 	</div>
