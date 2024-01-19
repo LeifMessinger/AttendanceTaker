@@ -5,6 +5,8 @@ sudo apt-get install python-is-python3
 #probably reboot here
 pushd /tmp
 sudo apt-get install wget
+sudo apt-get install docker
+sudo apt-get install docker-compose
 wget https://bootstrap.pypa.io/get-pip.py
 sudo python3 get-pip.py
 popd
