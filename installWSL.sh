@@ -12,12 +12,16 @@ sudo python3 get-pip.py
 popd
 
 pushd ./app
-pip3 install -r requirements.txt
 
 sudo pip3 install pyOpenSSL --upgrade
 sudo pip3 install cryptography --upgrade
 
 git submodule update --init --recursive
 
+./setupEnv.sh
+source venv/bin/activate
 ./resetDatabase.sh
+
+exit	#exits the venv
+
 popd
