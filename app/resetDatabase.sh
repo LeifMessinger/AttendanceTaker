@@ -1,5 +1,10 @@
 #!/bin/bash
 
+alias python='python3'
+function python {
+        python3 $@
+}
+
 if [ -f "./manage.py" ] ; then	#Make sure we're in the right folder
 	APP_NAME="AttendanceTaker"
 

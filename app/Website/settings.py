@@ -46,7 +46,7 @@ env = Env()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DJANGO_DEBUG", True)
 
-ALLOWED_HOSTS = ['*'] if (not DEBUG) else env.list("ALLOWED_HOSTS", ("localhost", "127.0.0.1", "leifstation.local"))
+ALLOWED_HOSTS = ['*'] #if (not DEBUG) else env.list("ALLOWED_HOSTS", ("localhost", "127.0.0.1", "leifstation.local"))
 
 if DEBUG:
 	import re
