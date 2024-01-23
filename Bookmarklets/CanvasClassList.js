@@ -1,4 +1,21 @@
 (async function(){
+  //So we'll just wait 10 seconds
+  async function wait(ms, retVal){
+      return new Promise((resolve, reject)=>{
+          setTimeout(resolve, ms, retVal);
+      });
+  }
+
+  let roleSelect = document.querySelector('select[name="enrollment_role_id"]');
+  for(let child of Array.from(roleSelect.children)){
+      if(child.textContent.trim().includes("Student (")){ //Because there's "Student Leader" with no students
+          roleSelect.value = child.getAttribute("value");
+          roleSelect.dispatchEvent(new Event("change"));
+      }
+  }
+
+  await wait(1000);
+
   let scrollIntervalId = setInterval(function(){
      window.scrollBy(0, 10000)
   }, 1000);
@@ -6,13 +23,6 @@
   //This isn't reliable, because the loading sign only shows when it's fetching more results.
   function isLoading(){
     return (document.querySelector(".paginatedLoadingIndicator").style.getPropertyValue("display") != "none");
-  }
-
-  //So we'll just wait 10 seconds
-  async function wait(ms, retVal){
-      return new Promise((resolve, reject)=>{
-          setTimeout(resolve, ms, retVal);
-      });
   }
 
   await wait(10000);
@@ -27,7 +37,7 @@
   
   // Step 1: Filter names where role is "Student" and remove pronouns
   const studentList = users
-    .filter(user => user.role === "Student")
+    //.filter(user => user.role === "Student")	Fixed that by selecting Students with the input
     .map(user => user.name.replace(/(\(.+\))/g, "").trim());
   
   // Step 2: Identify and handle duplicates
