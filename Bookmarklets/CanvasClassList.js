@@ -7,6 +7,7 @@
   }
 
   let roleSelect = document.querySelector('select[name="enrollment_role_id"]');
+  //For each of the options in the drop down
   for(let child of Array.from(roleSelect.children)){
       if(child.textContent.trim().includes("Student (")){ //Because there's "Student Leader" with no students
           roleSelect.value = child.getAttribute("value");
@@ -29,7 +30,16 @@
 
   clearTimeout(scrollIntervalId);
   
-  const users = Array.from(document.querySelectorAll(".rosterUser")).map((person)=>{
+  const users = Array.from(document.querySelectorAll(".rosterUser"))
+    .filter((elm)=>{ //Filter out inactive people (people who drop the class I think)
+      let labels = elm.querySelectorAll("span.label");
+      for(let label of labels){
+        if(label.textContent.includes("inactive")){
+          return false;
+        }
+      }
+      return true;
+    }).map((person)=>{
     return {"name": person.querySelector(".roster_user_name").textContent.trim(),
       "role": person.children[3].textContent.trim()
     };
