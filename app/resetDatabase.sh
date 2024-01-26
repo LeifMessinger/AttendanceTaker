@@ -10,7 +10,11 @@ if [ -f "./manage.py" ] ; then	#Make sure we're in the right folder
 
 	rm ./db.sqlite3 #Remove the whole database
 
-	git rm -rf ./$APP_NAME/migrations #Remove all migrations
+	git rm -rf ./$APP_NAME/migrations #Remove all migrations in case they are stored on git too
+	rm -rf ./$APP_NAME/migrations	#Remove all migrations
+
+	mkdir ./$APP_NAME/migrations
+	touch ./$APP_NAME/migrations/__init__.py
 
 	python manage.py migrate "$APP_NAME" zero --fake
 

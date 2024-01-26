@@ -1,4 +1,5 @@
 app/**/__pycache__/*.pyc
 app/static
+app/superUserPassword.txt
 dist/
 docker2exe
