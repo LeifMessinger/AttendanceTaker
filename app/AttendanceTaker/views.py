@@ -7,7 +7,7 @@ from .forms import MakeRoomForm
 
 from .models import Classroom
 
-ATTENDANCE_TAKER_VERSION = "v1.3.0"
+ATTENDANCE_TAKER_VERSION = "v1.4.0"
 
 #This is our homepage
 def make_room(request):
