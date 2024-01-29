@@ -160,7 +160,13 @@ def done(request):
 
 def room(request):
 	room_code = request.session.get("room_id")
-	return render(request, "room.html", { "room_code": room_code, "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
+
+	try:
+		obj = Classroom.objects.get(classCode = room_code)
+		return render(request, "room.html", { "room_code": room_code, "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION, "message": obj.message})	#Message has a default value.
+
+	except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
+		return render(request, "room.html", { "room_code": room_code, "attendanceTakerVersion": ATTENDANCE_TAKER_VERSION})
 
 
 # API stuff

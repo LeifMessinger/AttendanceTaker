@@ -78,6 +78,7 @@ class Classroom(models.Model):
 	classList = models.TextField(blank=True) #JSON string
 	classListOnly = models.BooleanField(default=False)
 	attendanceNotes = models.ManyToManyField(AttendanceNote)
+	message = models.CharField(max_length=100, blank=True) #Connect to UNT WiFi before scanning
 	@staticmethod
 	def cleanClassList(classListAsAString):
 		from django import forms

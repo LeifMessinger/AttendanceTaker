@@ -20,6 +20,10 @@ class MakeRoomForm(forms.ModelForm):
 	classList.widget.attrs.update({
 		'placeholder': 'optional\n\n["Json", "string", "array"]\n\nComma,Separated,Values  or  Tab\tSeparated\tValues\n\nNewline\nSeparated\nValues'
 	})
+	message = forms.CharField(label="Room Message", max_length=100, required=False)
+	message.widget.attrs.update({
+		'placeholder': 'Some text you want to display. Optional'
+	})
 	classListOnly = forms.BooleanField(label="Only allow names in the class list", required=False)
 
 	def clean_classList(self):
@@ -31,7 +35,7 @@ class MakeRoomForm(forms.ModelForm):
 
 	class Meta:
 		model = Classroom
-		fields = ["classCode", "classList", "classListOnly"]
+		fields = ["classCode", "classList", "classListOnly", "message"]
 		widgets = {
 			#"classCode": forms.CharField(label="Class code", max_length=30, required=False),
 			#"classList": forms.CharField(label="JSON class list", widget=forms.Textarea, required=False)
