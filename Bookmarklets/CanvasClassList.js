@@ -48,18 +48,18 @@
   // Step 1: Filter names where role is "Student" and remove pronouns
   const studentList = users
     //.filter(user => user.role === "Student")	Fixed that by selecting Students with the input
-    .map(user => user.name.replace(/(\(.+\))/g, "").trim());
+    .map(user => user.name.replace(/(\(.+\))/g, "").trim())
+    .sort();
   
   // Step 2: Identify and handle duplicates
+  //This is simplified to looking at pairs of adjacent names because I sorted the list
   const duplicates = [];
-  for (let i = 0; i < studentList.length; i++) {
-    for (let j = i + 1; j < studentList.length; j++) {
-      if (studentList[i] === studentList[j]) {
-        duplicates.push(studentList[i]);
-        studentList.splice(j, 1);
-        debugger
-        j--; // Adjust the index because of the splice
-      }
+  for (let i = 0; i < (studentList.length - 1); i++) {
+  //for (let j = i + 1; j < studentList.length; j++) {
+    let j = i + 1;
+    if (studentList[i] === studentList[j]) {
+      duplicates.push(studentList[i]);
+      studentList.splice(j, 1);
     }
   }
   function copyString(text){
