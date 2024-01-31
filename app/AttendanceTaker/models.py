@@ -8,7 +8,7 @@ class Student(models.Model):
 		primary_key = True,
 		default = uuid.uuid4,
 		editable = False)
-	fullName = models.CharField(max_length=200)
+	fullName = models.CharField(max_length=200, blank=False)
 	ipAddr = models.CharField(max_length=42, null=True)	#Can be null
 	#Probably store more data about the student
 	def isTheSame(self, otherStudent):

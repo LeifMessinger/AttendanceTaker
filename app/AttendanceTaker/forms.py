@@ -50,7 +50,11 @@ class AttendanceForm(forms.ModelForm):
 		#print(classListOnly, choices)
 		if classListOnly:
 			choices = [(item, item) for item in choices]
-			self.fields["fullName"].widget = forms.ChoiceField(choices=choices).widget;
+			choices.insert(0, (None, "--Please Select Your Name --"))
+			self.fields["fullName"].widget = forms.ChoiceField(choices=choices).widget
+			self.fields["fullName"].widget.attrs.update({
+				'autoComplete': 'on'
+			})
 		else:
 			self.fields['fullName'] = forms.CharField(label="Full name", max_length=100, required=True)
 			self.fields['fullName'].widget.attrs.update({
