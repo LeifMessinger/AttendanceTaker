@@ -22,17 +22,14 @@
 		}
 		.content{
 			font-size: 18px;
-		    text-align: justify;
-		    line-height: 22px;
-		    color: #0B1A47;
+			text-align: justify;
+			line-height: 22px;
+			color: #0B1A47;
 			margin: 5% 0%;
-			width: 100%;	
 		}
 		.present_count{
 			display: flex;
 			flex-direction: row;
-			width: 55%;
-			margin: auto;
 		}
 		.buttons_div{
 			display: flex;
@@ -45,12 +42,15 @@
 			margin: 2% auto;
 		}
 		
-		#absenceList{
+		.studentList{
+			/*
 			height: 360px;
-            overflow: hidden;
-            overflow-y: scroll;
+			*/
+			width: 100%;
+			overflow: hidden;
+			overflow-y: auto;
 		}
-		#absenceList > div{
+		.studentList > div{
 			min-height: 0px;
 		}
 		.qr_page_button {
@@ -95,7 +95,7 @@
 	</style>
     <div class="left_box">
 	<div class="box_title">Absent</div>
-	<div class="content" id="absenceList" shrink></div>
+	<div class="studentList" id="absenceList" shrink></div>
 	<div class="buttons_div">
 		<button class="qr_page_button" onclick="copyCSVAbsenceList()">Copy CSV</button>
 		<button class="qr_page_button" onclick="copyJSONAbsenceList()">Copy JSON</button>
@@ -213,9 +213,7 @@
 			}
 			.text{
 				text-align: center;
-				width: 100%;
 				font-size: 24px;
-				margin: 5% auto;
 			    color: #0B1A47;
 
 			}
@@ -276,10 +274,6 @@
         	button:hover {
             		background-color: #0056b3;
         	}
-		#attendanceList{
-			max-height: 90vh;
-			overflow: scroll;
-		}
 	</style>
 
 	<script src="{% static 'AttendanceTaker/excellentexport/dist/excellentexport.js' %}" type="text/javascript"></script>
@@ -334,9 +328,9 @@
     <div class="right_box">
 	<div class="box_title">Present</div>
 	<div class="present_count">
-	<div class="content">Head count: </div><div class="content" id="presentNumber"></div>
+	<div class="content">Head count:&nbsp;</div><div class="content" id="presentNumber"></div>
     </div>
-	<p id="attendanceList"></p>
+	<div class="studentList" id="attendanceList"></div>
 	<div class="buttons_div">
 		<button class="qr_page_button" onclick="copyCSVList()">Copy CSV</button>
 		<button class="qr_page_button" onclick="copyJSONList()">Copy JSON</button>
