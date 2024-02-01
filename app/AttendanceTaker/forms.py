@@ -18,7 +18,7 @@ class MakeRoomForm(forms.ModelForm):
 	})
 	classList = forms.CharField(label="Class list", widget=forms.Textarea, required=False)
 	classList.widget.attrs.update({
-		'placeholder': 'optional\n\n["Json", "string", "array"]\n\nComma,Separated,Values  or  Tab\tSeparated\tValues\n\nNewline\nSeparated\nValues'
+		'placeholder': 'optional\nEnter your list in one of these formats:\n["Json", "string", "array"]\nComma,Separated,Values\nTab\tSeparated\tValues\n\nNewline\nSeparated\nValues'
 	})
 	message = forms.CharField(label="Room Message", max_length=100, required=False)
 	message.widget.attrs.update({
