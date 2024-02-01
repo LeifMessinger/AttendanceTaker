@@ -14,11 +14,11 @@ class MakeRoomForm(forms.ModelForm):
 	template_name = "MakeRoomForm.html"
 	classCode = forms.CharField(label="Class code", max_length=30, required=False)
 	classCode.widget.attrs.update({
-		'placeholder': 'optional'
+		'placeholder': 'Enter your Class Code or Number'
 	})
-	classList = forms.CharField(label="Class list", widget=forms.Textarea, required=False)
+	classList = forms.CharField(label="Class list - optional", widget=forms.Textarea, required=False)
 	classList.widget.attrs.update({
-		'placeholder': 'optional\n\n["Json", "string", "array"]\n\nComma,Separated,Values  or  Tab\tSeparated\tValues\n\nNewline\nSeparated\nValues'
+		'placeholder': 'Enter your list in [Json, string, array] format'
 	})
 	classListOnly = forms.BooleanField(label="Only allow names in the class list", required=False)
 

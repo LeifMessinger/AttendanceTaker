@@ -1,12 +1,45 @@
+<style>
+ .fieldWrapper{
+  width: 80%;
+  border-radius: 5px;
+  outline: none;
+  background-color: #0B1A47;
+  text-indent: 5px;
+  margin: 2% 0%;
+  }
+  .head{
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    color: #ECEFF3;
+    background-color: #0B1A47;
+    margin-bottom: 5px;
+  }
+  input,textarea{
+    background: #ECEFF3;
+    border-radius: 5px;
+    color: #1b1f29;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    outline: none;
+    padding: 2% 1.5%;
+    width: 100%;
+  }
+  textarea{
+    height: 50px;
+  }
+
+</style>
 {% for field in form %}
-	<div column class="fieldWrapper">
+	<div class="fieldWrapper">
 		<div row>
-			<div grow style="display: inline;"> {{ field.label }} </div>
+			<div grow class="head"> {{ field.label }} </div>
 			<div style="color: red;">
 				{{ field.errors }}
 			</div>
 			{% if field.blank %}
-				<div style="display: inline; text-align: right;">optional</div> <!-- Have to figure out how to tie this to the field.required -->
+				<div>optional</div> <!-- Have to figure out how to tie this to the field.required -->
 			{% endif %}
 		</div>
 		{{ field }}
