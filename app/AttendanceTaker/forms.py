@@ -18,7 +18,7 @@ class MakeRoomForm(forms.ModelForm):
 	})
 	classList = forms.CharField(label="Class list - optional", widget=forms.Textarea, required=False)
 	classList.widget.attrs.update({
-		'placeholder': 'Enter your list in [Json, string, array] format'
+		'placeholder': 'optional\nEnter your list in one of these formats:\n["Json", "string", "array"]\nComma,Separated,Values\nTab\tSeparated\tValues\n\nNewline\nSeparated\nValues'
 	})
 	classListOnly = forms.BooleanField(label="Only allow names in the class list", required=False)
 
