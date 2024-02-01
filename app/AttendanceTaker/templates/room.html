@@ -93,7 +93,7 @@
 			margin: 2% auto 0%;
 		}
 	</style>
-	<!--<timer-component no-grow></timer-component>-->
+	<timer-component no-grow></timer-component>
     <div class="left_box">
 	<div class="box_title">Absent</div>
 	<div class="content" id="absenceList" shrink></div>
@@ -228,7 +228,7 @@
 			});
 		}
 	</script>
-    <div class="text" >This webapp requires cookies to work.</div>
+    <div class="text" >{{message|default:""}}</div>
 	<a onclick="studentSignIn">
 		<div id="qrcode"></div>
 	</a>
