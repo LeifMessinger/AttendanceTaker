@@ -93,7 +93,6 @@
 			margin: 2% auto 0%;
 		}
 	</style>
-	<timer-component no-grow></timer-component>
     <div class="left_box">
 	<div class="box_title">Absent</div>
 	<div class="content" id="absenceList" shrink></div>
@@ -101,6 +100,7 @@
 		<button class="qr_page_button" onclick="copyCSVAbsenceList()">Copy CSV</button>
 		<button class="qr_page_button" onclick="copyJSONAbsenceList()">Copy JSON</button>
 	</div>
+	<timer-component no-grow></timer-component>
     </div>
 	
 	
@@ -194,44 +194,44 @@
 {% endblock %}
 
 {% block middle_content %}
-    <div class="center_box">
-	<h1 id="para" style="font-size: 10vh; margin-left: auto; margin-right: auto;">Scan Me!</h1>
-	<!-- Maybe use htmx to swap the image. Use {bruh% url 'AttendanceTaker.QR' } as the image source' -->
-	<style>
-		a{
-			width: 80%;
-		}
-		#qrcode{
-			width: 100%;
-			margin: auto;
-		}
-		#qrcode>img{
-			width: 100%;
-			image-rendering: pixelated;
-			image-rendering: crisp-edges;
-			cursor: none;
-		}
-		.text{
-			text-align: center;
-			width: 100%;
-			font-size: 24px;
-			margin: 5% auto;
-		    color: #0B1A47;
+	<div class="center_box">
+		<h1 id="para" style="font-size: 10vh; margin-left: auto; margin-right: auto;">Scan Me!</h1>
+		<!-- Maybe use htmx to swap the image. Use {bruh% url 'AttendanceTaker.QR' } as the image source' -->
+		<style>
+			a{
+				width: 80%;
+			}
+			#qrcode{
+				width: 100%;
+				margin: auto;
+			}
+			#qrcode>img{
+				width: 100%;
+				image-rendering: pixelated;
+				image-rendering: crisp-edges;
+				cursor: none;
+			}
+			.text{
+				text-align: center;
+				width: 100%;
+				font-size: 24px;
+				margin: 5% auto;
+			    color: #0B1A47;
 
-		}
-	</style>
+			}
+		</style>
 
-	<script>
-		function studentSignIn(){
-			fetch("{% url 'ClassroomQRCode' %}").then((res)=>res.json()).then((data)=>data["data"]).then((base64String)=>{
-				window.location = document.location.origin + "/" + base64String;
-			});
-		}
-	</script>
-	<div class="text" >{{message|default:""}}</div>
-	<a onclick="studentSignIn">
-		<div id="qrcode"></div>
-	</a>
+		<script>
+			function studentSignIn(){
+				fetch("{% url 'ClassroomQRCode' %}").then((res)=>res.json()).then((data)=>data["data"]).then((base64String)=>{
+					window.location = document.location.origin + "/" + base64String;
+				});
+			}
+		</script>
+		<a onclick="studentSignIn">
+			<div id="qrcode"></div>
+		</a>
+		<div class="text" >{{message|default:""}}</div>
 	</div>
 	{% load static %}
 	<script src="{% static 'AttendanceTaker/qrcodejs/qrcode.min.js' %}" type="text/javascript"></script>
