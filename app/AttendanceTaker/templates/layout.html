@@ -6,14 +6,20 @@
 		.formError {
 			color: red;
 		}
-		:root {
-			--subtleBackground: #f2f2ff;
-		}
-
+        button {
+            border-style: none;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+} 
 		#middleUpperPadding{
 			background: var(--subtleBackground);
 		}
-		@media all and (max-width:700px){
+		/*@media all and (max-width:700px){
 			#middleUpperPadding {
 				flex-basis: 0%;
 				flex-grow: 0.5;
@@ -23,35 +29,45 @@
 			#middleUpperPadding {
 				flex-basis: 20%;
 			}
-		}
+		}*/
 
 		#leftPadding, #rightPadding {
-			flex-basis: 20%;
+			flex-basis: 30%;
 			background: var(--subtleBackground);
+		}
+		#centerContent{
+			display: flex;
+			flex-direction: column;
+			width: 100%;
 		}
 	</style>
 </head>
 
 
 {% block content %}
-
+<body>
 <div row grow>
 	<div id="leftPadding" column shrink style="padding-left: 1vw; padding-top: 1vh;">
 		{% block left_content %}
 		{% endblock %}
 	</div>
-	<div id="middleContent" column grow shrink style="min-width: 0;">
+	<div id="middleContent" column grow shrink >
 		<div id="middleUpperPadding" shrink></div>
 		<div column grow>
 			{% block middle_content %}
 			{% endblock %}
 		</div>
-		<div grow shrink style="flex-basis: 20%; background: var(--subtleBackground);"></div>
+		<div grow shrink></div>
 	</div>
 	<div id="rightPadding" column shrink style="text-align: right; padding-right: 1vw; padding-top: 1vh;">
 		{% block right_content %}
 		{% endblock %}
 	</div>
+	
+	<!--<div id="centerContent">
+		{% block center_content %}
+		{% endblock %}
+	</div>-->	
 </body>
 
 {% endblock %}
