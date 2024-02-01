@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source venv/bin/activate
+
 alias python='python3'
 function python {
         python3 $@
@@ -28,3 +30,5 @@ if [ -f "./manage.py" ] ; then	#Make sure we're in the right folder
 else
 	echo "We aren't in the app folder."
 fi
+
+deactivate
