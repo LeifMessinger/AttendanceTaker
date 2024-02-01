@@ -19,23 +19,12 @@
 		#middleUpperPadding{
 			background: var(--subtleBackground);
 		}
-		/*@media all and (max-width:700px){
-			#middleUpperPadding {
-				flex-basis: 0%;
-				flex-grow: 0.5;
-			}
-		}
-		@media not all and (max-width:700px){
-			#middleUpperPadding {
-				flex-basis: 20%;
-			}
-		}*/
 
 		#leftPadding, #rightPadding {
-			flex-basis: 30%;
 			background: var(--subtleBackground);
 		}
 		#middleContent{
+			flex-basis: min(100vw, 100vh);
 			display: flex;
 			flex-direction: column;
 		}
