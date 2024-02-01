@@ -4,28 +4,106 @@
 	<!-- Make Copy JSON button that queries the server for the present list and puts it in the clipboard -->
 	<!-- Make live attendance with htmx that updates every second. It can just render a template that loops through the students. -->
 	<style>
-		h2 {
-			font-size: 200%;
+		*{
+			margin: 0%;
+            padding: 0%;
+            font-family: "Poppins", sans-serif;
+	        text-align: justify;
+            list-style:none;
+            box-sizing: border-box;
+	        background-color: #ECEFF3;
 		}
+		.box_title{
+			font-size: 32px;
+            font-style: normal;
+            font-weight:600;
+			color: #0B1A47;
+			margin: 5% 0%;
+		}
+		.content{
+			font-size: 18px;
+		    text-align: justify;
+		    line-height: 22px;
+		    color: #0B1A47;
+			margin: 5% 0%;
+			width: 100%;	
+		}
+		.present_count{
+			display: flex;
+			flex-direction: row;
+			width: 55%;
+			margin: auto;
+		}
+		.buttons_div{
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			width: 100%;
+			margin: auto;
+		}
+		.buttons_div button{
+			margin: 2% auto;
+		}
+		
 		#absenceList{
-			max-height: 70vh; /* This is not a good solution, but it is needed to stop the absent list from being too big. */
-			min-height: 0px;
-			overflow: scroll;
+			height: 360px;
+            overflow: hidden;
+            overflow-y: scroll;
 		}
 		#absenceList > div{
 			min-height: 0px;
 		}
+		.qr_page_button {
+			width: auto;
+            border-style: none;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+			background-color: #0B1A47;
+			color: #ECEFF3;
+         } 
+        .left_box, .right_box{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			align-content: space-around;
+			padding: 5%;
+			margin: auto 0%;
+			height: 95%;
+			background-color: #ECEFF3;
+			border: 2px solid #0B1A47;
+			border-radius: 5px;
+		}
+        .center_box{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		timer-component{
+            margin: 4% auto 0%;
+			border-style: none;
+			background-color: #ECEFF3;
+			border: 2px solid #0B1A47;
+			border-radius: 3px;
+		}
+		#para{
+			color: #0B1A47;
+			margin: 2% auto 0%;
+		}
 	</style>
-
-	<h2>Absent:</h2>
-	<div id="absenceList" shrink></div>
-	<div>
-		<button onclick="copyCSVAbsenceList()">Copy CSV</button>
-		<button onclick="copyJSONAbsenceList()">Copy JSON</button>
+	<!--<timer-component no-grow></timer-component>-->
+    <div class="left_box">
+	<div class="box_title">Absent</div>
+	<div class="content" id="absenceList" shrink></div>
+	<div class="buttons_div">
+		<button class="qr_page_button" onclick="copyCSVAbsenceList()">Copy CSV</button>
+		<button class="qr_page_button" onclick="copyJSONAbsenceList()">Copy JSON</button>
 	</div>
-	<br />
-	<br />
-	<timer-component no-grow></timer-component>
+    </div>
+	
+	
 	{% load static %}
 	<link rel="stylesheet" href="{% static 'AttendanceTaker/timer.css' %}">
 	<script src="{% static 'AttendanceTaker/timer.js' %}" type="text/javascript"></script>	<!--Maybe this should be minified, but who cares -->
@@ -116,21 +194,30 @@
 {% endblock %}
 
 {% block middle_content %}
-	<p style="font-size: 10vh; margin-left: auto; margin-right: auto;">Scan me!</p>
+    <div class="center_box">
+	<h1 id="para" style="font-size: 10vh; margin-left: auto; margin-right: auto;">Scan Me!</h1>
 	<!-- Maybe use htmx to swap the image. Use {bruh% url 'AttendanceTaker.QR' } as the image source' -->
 	<style>
+		a{
+			width: 80%;
+		}
 		#qrcode{
-			width: 70%;
+			width: 100%;
 			margin: auto;
 		}
 		#qrcode>img{
 			width: 100%;
-
 			image-rendering: pixelated;
-			image-rendering: -moz-crisp-edges;
 			image-rendering: crisp-edges;
+			cursor: none;
+		}
+		.text{
+			text-align: center;
+			width: 100%;
+			font-size: 24px;
+			margin: 5% auto;
+		    color: #0B1A47;
 
-			cursor: none; //So that the teacher doesn't accidentally lay the mouse on the QR code
 		}
 	</style>
 
@@ -141,12 +228,10 @@
 			});
 		}
 	</script>
-
+	<div class="text" >{{message|default:""}}</div>
 	<a onclick="studentSignIn">
 		<div id="qrcode"></div>
 	</a>
-	<p style="margin-left: auto; margin-right: auto; font-size: 3vh; text-align: center;">{{message|default:""}}</p>
-
 	{% load static %}
 	<script src="{% static 'AttendanceTaker/qrcodejs/qrcode.min.js' %}" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -178,9 +263,6 @@
 	<!-- Make Copy JSON button that queries the server for the present list and puts it in the clipboard -->
 	<!-- Make live attendance with htmx that updates every second. It can just render a template that loops through the students. -->
 	<style>
-		h2 {
-			font-size: 200%;
-		}
 		button {
             		background-color: #007bff;
             		color: #fff;
@@ -248,16 +330,18 @@
 			return newApiArray("xlsx", attendance);
 		}
 	</script>
-
-	<h2>Present:</h2>
-	<span>Head count: </span><div id="presentNumber" style="display: inline;"></div>
+    <div class="right_box">
+	<div class="box_title">Present</div>
+	<div class="present_count">
+	<div class="content">Head count: </div><div class="content" id="presentNumber"></div>
+    </div>
 	<p id="attendanceList"></p>
-	<div>
-		<button onclick="copyCSVList()">Copy CSV</button>
-		<button onclick="copyJSONList()">Copy JSON</button>
-		<button onclick="getExcelSheet()">Download Excel</button>
+	<div class="buttons_div">
+		<button class="qr_page_button" onclick="copyCSVList()">Copy CSV</button>
+		<button class="qr_page_button" onclick="copyJSONList()">Copy JSON</button>
+		<button class="qr_page_button" onclick="getExcelSheet()">Download Excel</button>
 	</div>
-
+    </div>
 	{% load static %}
 	<script src="{% static 'AttendanceTaker/qrcodejs/qrcode.min.js' %}" type="text/javascript"></script>
 	<script type="text/javascript">
