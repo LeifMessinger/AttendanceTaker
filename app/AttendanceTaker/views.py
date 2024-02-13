@@ -115,6 +115,7 @@ def take_attendance(request, base64String):
 						reasons.append([1, otherStudent.fullName, str(otherStudent.id)])
 				except Student.DoesNotExist:
 					pass #Our bad lol
+
 				try:
 					#For each student that has the same ip address but not the same name
 					for otherStudent in Student.objects.all().filter(ipAddr=ip).exclude(fullName=form.cleaned_data["fullName"]):
@@ -122,6 +123,12 @@ def take_attendance(request, base64String):
 				except Student.DoesNotExist:
 					pass #Our bad lol
 			else:
+				try:
+					#For each student that has the same ip address but not the same name
+					for otherStudent in Student.objects.all().filter(ipAddr=ip).exclude(fullName=form.cleaned_data["fullName"]):
+							reasons.append([2, otherStudent.fullName, str(otherStudent.id)])
+				except Student.DoesNotExist:
+					pass #Our bad lol
 				reasons.append([3])
 
 			student, created = Student.objects.get_or_create(fullName=form.cleaned_data["fullName"],

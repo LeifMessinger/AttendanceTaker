@@ -21,7 +21,7 @@
 		}
 
 		#leftPadding, #rightPadding {
-			flex-basis: 20%;
+			flex-basis: 25%;
 			background: var(--subtleBackground);
 		}
 		#middleContent{
@@ -35,7 +35,7 @@
 
 {% block content %}
 <body>
-<div row grow>
+<div row grow style="width: 100%; height: 100%;">
 	<div id="leftPadding" column shrink style="padding-left: 1vw; padding-top: 1vh;">
 		{% block left_content %}
 		{% endblock %}

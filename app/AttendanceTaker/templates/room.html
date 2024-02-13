@@ -22,17 +22,14 @@
 		}
 		.content{
 			font-size: 18px;
-		    text-align: justify;
-		    line-height: 22px;
-		    color: #0B1A47;
+			text-align: justify;
+			line-height: 22px;
+			color: #0B1A47;
 			margin: 5% 0%;
-			width: 100%;	
 		}
 		.present_count{
 			display: flex;
 			flex-direction: row;
-			width: 55%;
-			margin: auto;
 		}
 		.buttons_div{
 			display: flex;
@@ -44,14 +41,12 @@
 		.buttons_div button{
 			margin: 2% auto;
 		}
-		
-		#absenceList{
-			height: 360px;
-            overflow: hidden;
-            overflow-y: scroll;
+		.studentList{
+			width: 100%;
+			overflow: hidden;
+			overflow-y: scroll;
 		}
-		#absenceList > div{
-			min-height: 0px;
+		.studentList > div{
 		}
 		.qr_page_button {
 			width: auto;
@@ -67,6 +62,7 @@
         .left_box, .right_box{
 			display: flex;
 			flex-direction: column;
+			justify-content: space-between
 			align-items: center;
 			align-content: space-around;
 			padding: 5%;
@@ -95,7 +91,7 @@
 	</style>
     <div class="left_box">
 	<div class="box_title">Absent</div>
-	<div class="content" id="absenceList" shrink></div>
+	<div class="content studentList" id="absenceList" shrink></div>
 	<div class="buttons_div">
 		<button class="qr_page_button" onclick="copyCSVAbsenceList()">Copy CSV</button>
 		<button class="qr_page_button" onclick="copyJSONAbsenceList()">Copy JSON</button>
@@ -215,9 +211,8 @@
 				text-align: center;
 				width: 100%;
 				font-size: 24px;
-				margin: 5% auto;
-			    color: #0B1A47;
-
+				margin: 1ex auto;
+				color: #0B1A47;
 			}
 		</style>
 
@@ -276,10 +271,6 @@
         	button:hover {
             		background-color: #0056b3;
         	}
-		#attendanceList{
-			max-height: 90vh;
-			overflow: scroll;
-		}
 	</style>
 
 	<script src="{% static 'AttendanceTaker/excellentexport/dist/excellentexport.js' %}" type="text/javascript"></script>
@@ -332,11 +323,15 @@
 		}
 	</script>
     <div class="right_box">
-	<div class="box_title">Present</div>
-	<div class="present_count">
-	<div class="content">Head count: </div><div class="content" id="presentNumber"></div>
-    </div>
-	<p id="attendanceList"></p>
+	<div class="box_title">
+		Present
+		<div class="present_count">
+			<div class="content">Head count: </div>
+			<div class="content" id="presentNumber"></div>
+		</div>
+	</div>
+
+	<p id="attendanceList" class="studentList"></p>
 	<div class="buttons_div">
 		<button class="qr_page_button" onclick="copyCSVList()">Copy CSV</button>
 		<button class="qr_page_button" onclick="copyJSONList()">Copy JSON</button>
