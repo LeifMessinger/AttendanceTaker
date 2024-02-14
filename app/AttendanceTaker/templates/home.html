@@ -1,3 +1,4 @@
+{% include "cssVariables.html" %}
 <style>
 	*{
     margin: 0%;
@@ -9,7 +10,7 @@
 	background-color: #ECEFF3;
     }
 	.header{
-	background-color: #0B1A47;
+	background-color: var(--main-bg-color);
     position: fixed;
     width: 100%;
     padding: 18px ;
@@ -43,13 +44,13 @@
 		padding: 5px 0px;
 	}
 	.left_div_head{
-        color: #0B1A47;
+        color: var(--dark-text-color);
 	}
 	.left_div_para{
 		font-size: 14px;
 		text-align: justify;
 		line-height: 25px;
-		color: #0B1A47;
+		color: var(--dark-text-color);
 	}
 	.left_div_buttons{
 		display: flex;
@@ -69,7 +70,7 @@
 			align-items: center;
 			padding:10% 0%;
             border-radius: 10px;
-            background: #0B1A47;
+            background: var(--main-bg-color);
 		}
 		button, .ref_buttons {
             border-style: none;
@@ -87,13 +88,13 @@
 		}
 		button{
 			padding:12px 18px;
-            background-color: #ECEFF3;
-			color: #0B1A47;
+			background-color: #ECEFF3;
+			color: var(--dark-text-color);
 		}
 		.ref_buttons{
 			width: 30%;
 			padding:10px;
-            background-color: #0B1A47;
+            background-color: var(--main-bg-color);
 			color: #ECEFF3;
 		} 
 		.sec_btn{
