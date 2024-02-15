@@ -16,5 +16,6 @@ sudo docker image rm $IMAGE_ID
 #https://download.docker.com/win/static/stable/x86_64/docker-24.0.7.zip
 
 #Just download it, unzip it to a folder, and add it to the path in powershell by doing
-$env:Path += ";D:\Whatever\Your\Path\Is\docker"
+echo 'Do this in powershell before running the exe:'
+echo '$env:Path += ";D:\Whatever\Your\Path\Is\docker"'
 #Then run the dockerd and then the exe that this generates

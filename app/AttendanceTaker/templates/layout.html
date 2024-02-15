@@ -1,6 +1,8 @@
 {% include "cssVariables.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	{% load static %}
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="{% static 'AttendanceTaker/FlexML/FlexML.css' %}" type="text/css">
 	<style>
@@ -29,9 +31,10 @@
 			background: var(--subtleBackground);
 		}
 		#middleContent{
-			flex-basis: min(100vw, 100vh);
 			display: flex;
 			flex-direction: column;
+			width: 100%;
+			max-width: min(100vw, 100vh);
 		}
 	</style>
 </head>
@@ -39,12 +42,12 @@
 
 {% block content %}
 <body>
-<div row grow style="width: 100%; height: 100%;">
-	<div id="leftPadding" column shrink style="padding-left: 1vw; padding-top: 1vh;">
+<body row style="justify-content: space-between;">
+	<div id="leftPadding" column grow shrink style="padding-left: 1vw; padding-top: 1vh;">
 		{% block left_content %}
 		{% endblock %}
 	</div>
-	<div id="middleContent" column grow >
+	<div id="middleContent" column grow shrink> <!-- That's not an error. We actually need growshrink -->
 		<div id="middleUpperPadding" shrink></div>
 		<div column grow>
 			{% block middle_content %}
@@ -52,11 +55,10 @@
 		</div>
 		<div grow shrink></div>
 	</div>
-	<div id="rightPadding" column shrink style="text-align: right; padding-right: 1vw; padding-top: 1vh;">
+	<div id="rightPadding" column grow shrink style="text-align: right; padding-right: 1vw; padding-top: 1vh;">
 		{% block right_content %}
 		{% endblock %}
 	</div>
-	
 	<!--<div id="centerContent">
 		{% block center_content %}
 		{% endblock %}

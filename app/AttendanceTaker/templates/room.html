@@ -41,11 +41,15 @@
 			margin: 2% auto;
 		}
 		.studentList{
+			/*
+			height: 360px;
+			*/
 			width: 100%;
 			overflow: hidden;
-			overflow-y: scroll;
+			overflow-y: auto;
 		}
 		.studentList > div{
+			min-height: 0px;
 		}
 		.qr_page_button {
 			width: auto;
@@ -208,9 +212,7 @@
 			}
 			.text{
 				text-align: center;
-				width: 100%;
 				font-size: 24px;
-				margin: 1ex auto;
 				color: var(--main-bg-color);
 			}
 		</style>
