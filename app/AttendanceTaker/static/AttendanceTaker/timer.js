@@ -13,7 +13,6 @@ class TimerComponent extends HTMLElement {
 					align-items: center;
 					justify-content: center;
 					width: 200px;
-					height: 150px;
 					box-sizing: border-box;
 					margin: 0 auto 0 auto;
 				}
