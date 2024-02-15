@@ -1,11 +1,14 @@
+{% include "cssVariables.html" %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="{% static 'AttendanceTaker/FlexML/FlexML.css' %}" type="text/css">
 	<style>
+		*{
+			font-family: var(--font-family-thicc);
+		}
 		.formError {
 			color: red;
 		}
@@ -24,6 +27,7 @@
 		}
 
 		#leftPadding, #rightPadding {
+			flex-basis: 25%;
 			background: var(--subtleBackground);
 		}
 		#middleContent{
@@ -37,6 +41,7 @@
 
 
 {% block content %}
+<body>
 <body row style="justify-content: space-between;">
 	<div id="leftPadding" column grow shrink style="padding-left: 1vw; padding-top: 1vh;">
 		{% block left_content %}
