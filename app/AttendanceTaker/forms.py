@@ -16,7 +16,7 @@ class MakeRoomForm(forms.ModelForm):
 	classCode.widget.attrs.update({
 		'placeholder': 'Enter the room name. Optional'
 	})
-	classList = forms.CharField(label="Class list - optional", widget=forms.Textarea, required=False)
+	classList = forms.CharField(label="Class list", widget=forms.Textarea, required=False)
 	classList.widget.attrs.update({
 		'placeholder': 'optional\nEnter your list in one of these formats:\n["Json", "string", "array"]\nComma,Separated,Values\nTab\tSeparated\tValues\n\nNewline\nSeparated\nValues'
 	})
