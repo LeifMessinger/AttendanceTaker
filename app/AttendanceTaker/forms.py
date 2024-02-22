@@ -14,7 +14,7 @@ class MakeRoomForm(forms.ModelForm):
 	template_name = "MakeRoomForm.html"
 	classCode = forms.CharField(label="Class code", max_length=30, required=False)
 	classCode.widget.attrs.update({
-		'placeholder': 'Enter your Class Code or Number'
+		'placeholder': 'Enter the room name. Optional'
 	})
 	classList = forms.CharField(label="Class list - optional", widget=forms.Textarea, required=False)
 	classList.widget.attrs.update({
