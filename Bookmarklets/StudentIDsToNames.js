@@ -7,6 +7,16 @@ async function wait(ms, retVal){
 	});
 }
 
+const listText = prompt("Enter the present JSON list");
+if(!listText) return;
+try{
+	const presentList = JSON.parse(listText);
+}catch(e){
+	alert("Couldn't parse list: " + e.message);
+	return;
+}
+const stuIDs = JSON.parse(listText);
+
 let roleSelect = document.querySelector('select[name="enrollment_role_id"]');
 //For each of the options in the drop down
 for(let child of Array.from(roleSelect.children)){
@@ -37,16 +47,6 @@ for(let student of Array.from(document.querySelectorAll(".rosterUser"))){
 	//If this breaks, it's because that children[3] thing. The student id doesn't have a special class on it, so if something changes, then it breaks.
 	studentDB[student.children[3].textContent.trim()] = student.querySelector(".roster_user_name").textContent.trim();
 }
-
-const listText = prompt("Enter the present JSON list");
-if(!listText) return;
-try{
-	const presentList = JSON.parse(listText);
-}catch(e){
-	alert("Couldn't parse list: " + e.message);
-	return;
-}
-const stuIDs = JSON.parse(listText);
 
 function copyString(text){
 	async function navigatorClipboardCopy(text){
@@ -91,7 +91,7 @@ function copyString(text){
 	});
 }
 
-let result = stuIDs.map(id=>studentDB[id]).map(name=>name.replace(/(\(.+\))/g, "").trim());
+let result = stuIDs.map(id=>studentDB[id]).filter(name=>(name != undefined)).map(name=>name.replace(/(\(.+\))/g, "").trim());
 
 console.log(result);
 
