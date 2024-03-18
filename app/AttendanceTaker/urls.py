@@ -16,6 +16,7 @@ urlpatterns = [
     path("done/", views.done, name="done"),
     path("verifyReceipt/", views.verifyReceipt, name="verifyReceipt"),
     path("ClassroomQRCode/", views.ClassroomQRCode.as_view(), name="ClassroomQRCode"),
+    path("ClassroomStudentAttend/", views.ClassroomStudentAttend.as_view(), name="ClassroomStudentAttend"),
     path("ClassroomAttendanceList/", views.ClassroomAttendanceList.as_view(), name="ClassroomAttendanceList"),	#Used by CopyJSON
     path("ClassroomAttendanceDetails/", views.ClassroomAttendanceDetails.as_view(), name="ClassroomAttendanceDetails"),
     path("ClassroomAbsenceList/", views.ClassroomAbsenceList.as_view(), name="ClassroomAbsenceList"),

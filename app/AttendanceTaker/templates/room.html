@@ -168,12 +168,48 @@
 				copyString(absenceList.join(","));
 			});
 		}
+
+		function admitStudent(studentFullName){
+			fetch("{% url 'ClassroomStudentAttend' %}" + "?fullName=" + studentFullName /*, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/vnd.api+json",
+				},
+				body: JSON.stringify({
+					"data": {
+						//"type": "identities",
+						//"id": 1,
+						"attributes": {
+							"fullName": studentFullName
+						}
+					}
+				})
+			}*/).then((res)=>res.json()).then((data)=>data["data"]).then((absenceList)=>{
+				console.log(absenceList);
+				copyString(JSON.stringify(absenceList));
+			});
+		}
+
+		function admitStudentOnClick(){
+			const student = this.studentName;
+			if(!student){
+				alert("Student is falsy?");
+				return;
+			}
+			if(confirm("You want to admit " + student + " into the room?")){
+				admitStudent(student);
+			}
+		}
+
 		function buildAbsenceList(absenceList) {
 			const parent = document.createElement('div');
 
 			for (let studentName of absenceList) {
 				const name = document.createElement('span');
                                 name.textContent = studentName;
+
+				name.studentName = studentName;
+				name.addEventListener("click", admitStudentOnClick);
 
 				parent.appendChild(name);
                                 parent.appendChild(document.createElement('br'));
@@ -355,7 +391,8 @@
 			const errorCodes = {
 				1: 'red',	//Cookies match with another student
 				2: '#cc5500',	//IPs match with another student
-				3: 'black'	//I don't really consider this to be an error
+				3: 'black',	//I don't really consider this to be an error
+				4: 'blue'	//Teacher let the student into the room
 			};
 
 			const parent = document.createElement('div');

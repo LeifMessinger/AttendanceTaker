@@ -60,6 +60,7 @@ def make_room(request):
 	#[1, otherStudentName, otherId]	Cookies are the same
 	#[2, otherStudentName, otherId]	IPs are the same
 	#[3]	New cookie created
+	#[4]	Admitted by teacher
 from .forms import AttendanceForm
 def take_attendance(request, base64String):
 
@@ -221,6 +222,33 @@ class ClassroomAttendanceList(APIView):
 			newClassroom = form.save()
 			request.session["room_id"] = str(newClassroom.id)
 
+from django.http import HttpResponseNotFound
+from .models import Classroom
+class ClassroomStudentAttend(APIView):
+	#def post(self, request): #Really should be a post request, but django is awful and http is awful
+	def get(self, request):
+		room_code = request.POST.get("room_id", None) or request.session.get("room_id")
+		if room_code is None:
+			return HttpResponseNotFound("Room code not in cookies or url params")
+		try:
+			classroom = Classroom.objects.get(id=room_code)
+
+			studentFullName = request.GET.get("fullName", None)
+
+			if studentFullName is None:
+				return HttpResponseNotFound("Student fullName not in url params")
+
+			#print(studentFullName)
+
+			student, created = Student.objects.get_or_create(fullName=studentFullName,
+				defaults={"fullName": studentFullName})
+
+			student.attend(classroom, [[4]])
+
+			return HttpResponse(status=200)
+
+		except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
+			return HttpResponseNotFound("Could not find room " + room_code + " in the database")
 
 from .models import Classroom
 class ClassroomAttendanceDetails(APIView):
@@ -245,7 +273,7 @@ class ClassroomAttendanceDetails(APIView):
 
 			return Response(students)
 
-		except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
+		except Classroom.DoesNotExist:
 			#This means we're in the clear, and we can create a new classroom.
 			newClassroom = form.save()
 			request.session["room_id"] = str(newClassroom.id)

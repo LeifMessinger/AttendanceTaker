@@ -80,6 +80,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+JSON_API_FORMAT_KEYS = 'underscore'
+JSON_API_FORMAT_TYPES = 'underscore'
+JSON_API_PLURALIZE_TYPES = True
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
     'DEFAULT_PAGINATION_CLASS':
