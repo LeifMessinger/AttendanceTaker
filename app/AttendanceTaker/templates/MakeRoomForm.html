@@ -29,13 +29,19 @@
 	button {
 		font-size: inherit;
 	}
+	.errorMessage {
+		/* child flex settings */
+		flex-basis: 50%;
 
+		font-size: 50%;
+		color: red;
+	}
 </style>
 {% for field in form %}
 	<div class="fieldWrapper">
 		<div row>
 			<div grow class="head"> {{ field.label }} </div>
-			<div style="color: red;">
+			<div class="errorMessage" column style="justify-content: flex-end;">
 				{{ field.errors }}
 			</div>
 			{% if field.blank %}

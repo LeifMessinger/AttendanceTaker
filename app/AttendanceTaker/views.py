@@ -223,7 +223,7 @@ class ClassroomAttendanceList(APIView):
 			request.session["room_id"] = str(newClassroom.id)
 
 from django.http import HttpResponseNotFound
-from .models import Classroom
+from .models import Classroom, AttendanceNote
 class ClassroomStudentAttend(APIView):
 	#def post(self, request): #Really should be a post request, but django is awful and http is awful
 	def get(self, request):
@@ -244,6 +244,26 @@ class ClassroomStudentAttend(APIView):
 				defaults={"fullName": studentFullName})
 
 			student.attend(classroom, [[4]])
+
+			return HttpResponse(status=200)
+
+		except Classroom.DoesNotExist: #it is the Classroom because we search the classrooms in the try block
+			return HttpResponseNotFound("Could not find room " + room_code + " in the database")
+	def delete(self, request):
+		room_code = request.POST.get("room_id", None) or request.session.get("room_id")
+		if room_code is None:
+			return HttpResponseNotFound("Room code not in cookies or url params")
+		try:
+			classroom = Classroom.objects.get(id=room_code)
+
+			studentFullName = request.GET.get("fullName", None)
+
+			if studentFullName is None:
+				return HttpResponseNotFound("Student fullName not in url params")
+
+			#print(studentFullName)
+
+			AttendanceNote.objects.filter(classroomId=classroom, fullName=studentFullName).delete()
 
 			return HttpResponse(status=200)
 
